@@ -7,6 +7,7 @@ import Cart from "@/models/Cart";
 import Link from "next/link";
 import { PayNowButton } from "../PayNowButton";
 import { CheckCircle, MapPin, Phone, Package, CreditCard } from "lucide-react";
+import Product from "@/models/Product";
 
 export default async function Review({
   searchParams,
@@ -36,6 +37,8 @@ export default async function Review({
 
   let addressData = null;
   if (searchParams.addressId) {
+    const Invokeporduct = Product;
+    await Product.find({})
     const userAddressDoc = await Address.findOne({ userId });
     addressData = userAddressDoc?.addresses?.find(
       (addr: any) => addr._id.toString() === searchParams.addressId
