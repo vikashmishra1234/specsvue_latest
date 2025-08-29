@@ -2,6 +2,7 @@ import Cart from "@/models/Cart";
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/dbConnect";
 import mongoose from "mongoose";
+import Product from "@/models/Product";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
+    await Product.find({})
     let cart = await Cart.findOne({ userId });
 
     const priceAsNumber = typeof price === "string" ? parseFloat(price) : price;

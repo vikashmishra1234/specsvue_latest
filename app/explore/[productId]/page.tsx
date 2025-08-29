@@ -232,7 +232,7 @@ const LensSelectorModal = memo(({ product, onClose }: { product: IProduct, onClo
       const framePrice = parseFloat(product.price) || 0;
       const total = lens.price + framePrice;
       console.log(lens)
-      const userId = session?session.user.userId:localStorage.getItem("guestId")
+      const userId = session?(session.user.userId):localStorage.getItem("guestId");
       const payload = {
         userId,
         productId: product._id,
@@ -267,7 +267,7 @@ const LensSelectorModal = memo(({ product, onClose }: { product: IProduct, onClo
           {isSubmitting && <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70"><LoadingSpinner /></div>}
           <div className="p-6">
             <header className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Select Your Lens</h2>
+              <h2 className="text-2xl font-bold text-gray-900">🔍 Select Yourm Lens</h2>
               <button onClick={onClose} className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800">
                 <X size={24} />
               </button>

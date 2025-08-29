@@ -1,7 +1,7 @@
 "use server"
 import { connectToDatabase } from "@/lib/dbConnect";
 import Cart from "@/models/Cart";
-
+import Product from "@/models/Product";
 export default async function getUserCart(userId: string) {
   if (!userId) {
     return {
@@ -12,7 +12,7 @@ export default async function getUserCart(userId: string) {
 
   try {
     await connectToDatabase();
-
+    const products = await Product.find({});
     const currentUserCart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!currentUserCart) {
