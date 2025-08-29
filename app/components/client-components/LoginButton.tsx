@@ -25,7 +25,6 @@ const UserLogin = () => {
     
     (async()=>{
      
-      const redirectPath = sessionStorage.getItem("navigateAfterLogin") || "/products"; // Default redirect
     if (status === "authenticated") {
       const data = {
         guestId:localStorage.getItem("guestId"),
@@ -35,7 +34,7 @@ const UserLogin = () => {
       console.log(res)
       sessionStorage.removeItem("navigateAfterLogin");
       localStorage.removeItem("guestId")
-      router.push(redirectPath);
+      router.push("/cart");
     }
     })()
   }, [status, router]);

@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
   if(pathname.startsWith('/proceed-to-payment') && !token){
       
       console.log("User is not authenticated (via next-auth)")
-      const loginUrl = new URL('/login', origin)
+      const loginUrl = new URL('/', origin)
       loginUrl.searchParams.set('callbackUrl', pathname)
       return NextResponse.redirect(loginUrl)
     
