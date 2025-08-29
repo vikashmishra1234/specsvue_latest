@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   // 🛡️ Get the token from NextAuth session
   const token = await getToken({ req: request, secret });
   const adminToken = request.cookies.get('adminToken')?.value;
-
+  console.log("user token is: ",token)
   // 🔐 Protect specific route (e.g., API route)
   if (pathname === '/api/get-address') {
     if (!token) {
