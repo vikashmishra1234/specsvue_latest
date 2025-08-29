@@ -1,0 +1,74 @@
+{
+    "lenses": [
+        {
+          "name": "Single Vision",
+          "icon": "👁️",
+          "description": "For distance or near vision (Thin, anti-glare, blue-cut options)",
+          "data": [
+            {
+              "type": "Distance",
+              "lensId":"single12",
+              "coating": "Anti-glare, Blue-cut",
+              "material": "Standard, Polycarbonate, Hi-Index",
+              "price": 500
+            },
+            {
+              "type": "Reading",
+              "lensId":"single123",
+              "coating": "Anti-glare, Scratch-resistant",
+              "material": "Standard",
+              "price": 1500
+            }
+          ]
+        },
+        {
+          "name": "Bifocal/Progressive",
+         
+          "icon": "👓",
+          "description": "Bifocal and Progressives (For two powers in same lenses)",
+          "data": [
+            {
+              "type": "Bifocal",
+              "lensId":"bifocal12",
+              "segmentStyle": "D-shaped, Round",
+              "coating": "Anti-glare",
+              "material": "Glass, Plastic",
+              "price":3000
+            }
+          ]
+        },
+        {
+          "name": "Zero Power",
+         
+          "icon": "🔆",
+          "description": "Block 98% of harmful rays (Anti-glare and blue-cut options)",
+          "data": [
+            {
+              "type": "Zero Power",
+              "lensId":"zero12",
+              "coating": "Blue-cut",
+              "material":"Glass, Plastic",
+              "lensColor": "Clear",
+              "price": 0
+            }
+          ]
+        },
+        {
+          "name": "Frame Only",
+        
+          "icon": "🖼️",
+          "description": "Buy Only Frame",
+          "data": [
+            {
+              "material": "Frame only",
+              "lensId":"frame12",
+              "type":"Frame Only",
+              "coating":"Frame Only",
+              "sizeOptions": "Frame Only",
+              "price": 0
+            }
+          ]
+        }
+      ]
+  }
+  
