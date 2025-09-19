@@ -51,7 +51,8 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
       setLoading(true)
       const res = await axios.post("/api/add-address", payload);
       if(res){
-        setSelectedAddressId(res?.data?.data?._id)
+        setSelectedAddressId(res?.data?.data?._id);
+        setShowForm(false)
         handleProceed()
       }
       

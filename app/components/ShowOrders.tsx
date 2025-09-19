@@ -110,6 +110,9 @@ const ShowOrders: React.FC<ShowOrdersProps> = ({ isAdmin, order,isCancell }) => 
         </h3>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {orderData.items.map((item: any, itemIndex: any) => {
+             if(!item.productId){
+              return ;
+            }
             const product = item.productId;
 
             return (

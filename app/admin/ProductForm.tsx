@@ -39,16 +39,42 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     discount: '',
   })
 
+  const fields: any = {
+    brandName: 'Specsvue',
+    productType: 'Sunglasses',
+    frameType: 'Full Rim',
+    frameShape: 'Rectangle, Rounded',
+    modelNumber: '1234',
+    frameSize: 'size',
+    frameWidth: 'width',
+    frameDimensions: '',
+    frameColor: '',
+    weight: '',
+    weightGroup: '',
+    material: '',
+    frameMaterial: '',
+    templeMaterial: '',
+    prescriptionType: '',
+    frameStyle: '',
+    frameStyleSecondary: '',
+    collection: '',
+    productWarranty: '',
+    gender: '',
+    height: '',
+    condition: '',
+    templeColor: '',
+    price: '',
+    discount: '',
+  }
+
   const [images, setImages] = useState<FileList | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
 
-  // Capitalize first letter of every word
   const capitalizeWords = (str: string) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase())
 
-  // Fields that should be auto-capitalized
   const capitalizedFields = [
     'brandName',
     'productType',
@@ -106,7 +132,6 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
 
     try {
       const data = new FormData()
-
       for (const key in formData) {
         data.append(key, formData[key as keyof typeof formData])
       }
@@ -144,13 +169,13 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#00000077] bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="max-w-4xl w-full bg-white p-6 shadow-md rounded-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl flex justify-between font-semibold mb-4">
+    <div className="fixed inset-0 bg-[#00000077] bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
+      <div className="w-full max-w-6xl bg-white p-4 sm:p-6 shadow-md rounded-md max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl sm:text-2xl flex justify-between font-semibold mb-4">
           Add New Product
           <button
             onClick={() => setShowForm(false)}
-            className="text-sm cursor-pointer hover:bg-gray-900 hover:text-white border px-5 py-1 rounded"
+            className="text-xs sm:text-sm cursor-pointer hover:bg-gray-900 hover:text-white border px-3 sm:px-5 py-1 rounded"
           >
             Close
           </button>
@@ -160,27 +185,27 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           {Object.keys(formData).map((key) => (
             <div key={key} className="flex flex-col">
-              <label className="text-gray-700 font-medium">
+              <label className="text-gray-700 font-medium text-sm sm:text-base">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </label>
               <input
                 type="text"
                 name={key}
+                placeholder={fields[key]}
                 value={formData[key as keyof typeof formData]}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 capitalize"
-                required
+                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 capitalize text-sm sm:text-base"
               />
             </div>
           ))}
 
           {/* Image Upload */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="text-gray-700 font-medium block mb-1">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+            <label className="text-gray-700 font-medium block mb-1 text-sm sm:text-base">
               Product Images
             </label>
             <input
@@ -189,30 +214,30 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
               accept="image/*"
               multiple
               onChange={handleImageChange}
-              className="block w-full border border-gray-300 p-2 rounded-md"
+              className="block w-full border border-gray-300 p-2 rounded-md text-sm sm:text-base"
               required
             />
           </div>
 
           {/* Image Preview */}
           {previewUrls.length > 0 && (
-            <div className="col-span-2 grid grid-cols-3 gap-2">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {previewUrls.map((url, idx) => (
                 <img
                   key={idx}
                   src={url}
                   alt={`preview-${idx}`}
-                  className="w-full h-32 object-cover rounded-md border"
+                  className="w-full h-28 sm:h-32 object-cover rounded-md border"
                 />
               ))}
             </div>
           )}
 
           {/* Submit Button */}
-          <div className="col-span-2 mt-4">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3 mt-4">
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200 text-sm sm:text-base"
             >
               {loading ? 'Submitting...' : 'Submit'}
             </button>

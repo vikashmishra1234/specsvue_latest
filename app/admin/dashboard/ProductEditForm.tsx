@@ -131,7 +131,6 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
                 value={formData[key as keyof typeof formData]}
                 onChange={handleChange}
                 className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600"
-                required
               />
             </div>
           ))}
