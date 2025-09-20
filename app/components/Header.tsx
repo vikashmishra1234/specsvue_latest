@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X, User } from "lucide-react"; // Added User icon
+import { ShoppingCart } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 
@@ -79,6 +80,10 @@ const Header = () => {
           {/* Action Icons: User Icon (Desktop) & Hamburger (Mobile) */}
           <div className="flex items-center gap-4">
             {/* ENHANCEMENT: User icon added for desktop view */}
+            <Link href={'/cart'} className="hidden md:block text-gray-300 hover:text-white transition-colors">
+              {/* <Cart size={24} /> */}
+              <ShoppingCart />
+            </Link>
             <Link href={status==='authenticated'?'/user':'/login'} className="hidden md:block text-gray-300 hover:text-white transition-colors">
               <User size={24} />
             </Link>
