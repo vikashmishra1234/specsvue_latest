@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { signToken } from "@/actions/jwt";
+import bcrypt from 'bcryptjs'
 import Admin from "@/models/Admin";
 
 export async function POST(req: Request) {
@@ -15,15 +16,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "adminId and password are required" }, { status: 400 });
     }
 
+    // const hashPass = await bcrypt.hash(password,10);
+
+    // const admin = new Admin({
+    //   adminId,
+    //   password:hashPass
+    // })
+    // console.log(admin)
+    // await admin.save()
+
     const admin = await Admin.findOne({ adminId });
 
     if (!admin) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const isMatch = admin.password === password;
+    const match = bcrypt.compareSync(password,admin.password)
 
-    if (!isMatch) {
+    if (!match) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
