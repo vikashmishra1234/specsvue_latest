@@ -6,50 +6,52 @@ export async function DELETE(req: NextRequest) {
   try {
     await connectToDatabase();
 
-    const { userId, lensId } = await req.json();
+    const { userId, cartProductId, lensId } = await req.json();
 
-    if (!userId || !lensId) {
+    if (!userId || !cartProductId || !lensId) {
       return NextResponse.json(
-        { message: "Missing userId or lensId" },
+        { message: "Missing userId, cartProductId, or lensId" },
         { status: 400 }
       );
     }
 
-    // 1. Fetch the current cart
     const cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      return NextResponse.json(
-        { message: "Cart not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Cart not found" }, { status: 404 });
     }
 
-    // 2. Find the item to remove
-    const itemToRemove = cart.items.find((item:any) => item.lensId === lensId);
+    const itemsToRemove = cart.items.filter(
+  (item: any) => item.cartProductId === cartProductId && item.lensId === lensId
+);
 
-    if (!itemToRemove) {
-      return NextResponse.json(
-        { message: "Item not found in cart" },
-        { status: 404 }
-      );
-    }
+if (itemsToRemove.length === 0) {
+  return NextResponse.json(
+    { message: "Item not found in the cart" },
+    { status: 404 }
+  );
+}
 
-    const itemTotal = itemToRemove.price * itemToRemove.quantity;
-    const updatedTotal = cart.cartTotal - itemTotal;
+// Calculate how much to subtract
+const removeAmount = itemsToRemove.reduce(
+  (sum: number, item: any) => sum + (item.price * (item.quantity || 1)),
+  0
+);
 
-    // 3. Update the cart: pull item + update total
-    const updatedCart = await Cart.findOneAndUpdate(
-      { userId },
-      {
-        $pull: { items: { lensId } },
-        $set: { cartTotal: updatedTotal }
-      },
-      { new: true }
-    );
+const updatedTotal = cart.cartTotal - removeAmount;
+
+// Keep only the remaining items
+const newCartItems = cart.items.filter(
+  (item: any) => !(item.cartProductId === cartProductId && item.lensId === lensId)
+);
+
+await Cart.findOneAndUpdate(
+  { userId },
+  { $set: { cartTotal: updatedTotal, items: newCartItems } }
+);
 
     return NextResponse.json(
-      { message: "Item removed", cart: updatedCart },
+      { message: "Product is removed from the cart" },
       { status: 200 }
     );
   } catch (error) {

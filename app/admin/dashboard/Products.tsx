@@ -6,8 +6,7 @@ import {
   Trash2,
   Eye,
   Package,
-  Calendar,
-  DollarSign,
+  IndianRupee,
   Tag,
   Users,
   Palette,
@@ -162,9 +161,9 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
                       <span>{product.frameColor}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-600">
-                      <DollarSign className="h-3 w-3" />
+                      <IndianRupee className="h-3 w-3" /> 
                       <span className="font-semibold text-gray-900">
-                        ₹{product.price}
+                        {product.price}
                       </span>
                     </div>
                   </div>
@@ -173,21 +172,21 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleViewProduct(product)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 text-sm"
+                      className="flex-1 cursor-pointer flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200 text-sm"
                     >
                       <Eye className="h-4 w-4" />
                       View
                     </button>
                     <button
                       onClick={() => handleUpdateProduct(product)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors duration-200 text-sm"
+                      className="flex-1 cursor-pointer flex items-center justify-center gap-1 px-3 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors duration-200 text-sm"
                     >
                       <Edit className="h-4 w-4" />
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteProduct(product._id)}
-                      className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-200 text-sm"
+                      className="flex-1 cursor-pointer flex items-center justify-center gap-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-200 text-sm"
                     >
                       <Trash2 className="h-4 w-4" />
                       Delete

@@ -3,15 +3,21 @@
 import { useState } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { X } from 'lucide-react'
 
 interface ProductEditFormProps {
-  setShowUpdateForm: (value: boolean) => void;
-  productToBeUpdate: ProductType;
-   setChange: (value:boolean)=>void;
-  change:boolean;
+  setShowUpdateForm: (value: boolean) => void
+  productToBeUpdate: ProductType
+  setChange: (value: boolean) => void
+  change: boolean
 }
 
-export default function ProductEditForm({ setChange,change,setShowUpdateForm, productToBeUpdate }: ProductEditFormProps) {
+export default function ProductEditForm({
+  setChange,
+  change,
+  setShowUpdateForm,
+  productToBeUpdate,
+}: ProductEditFormProps) {
   const [formData, setFormData] = useState({
     brandName: productToBeUpdate.brandName,
     productType: productToBeUpdate.productType,
@@ -46,25 +52,33 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files)
       const existingFiles = images ? Array.from(images) : []
-
       const combinedFiles = [...existingFiles, ...newFiles]
-      const dataTransfer = new DataTransfer()
-      combinedFiles.forEach(file => dataTransfer.items.add(file))
-      const updatedFileList = dataTransfer.files
-      setImages(updatedFileList)
 
-      const urls = Array.from(updatedFileList).map(file => URL.createObjectURL(file))
+      const dataTransfer = new DataTransfer()
+      combinedFiles.forEach((file) => dataTransfer.items.add(file))
+      setImages(dataTransfer.files)
+
+      const urls = Array.from(combinedFiles).map((file) => URL.createObjectURL(file))
       setPreviewUrls(urls)
+    }
+  }
+
+  const removeSelectedImage = (index: number) => {
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index))
+
+    if (images) {
+      const dataTransfer = new DataTransfer()
+      Array.from(images)
+        .filter((_, i) => i !== index)
+        .forEach((file) => dataTransfer.items.add(file))
+      setImages(dataTransfer.files)
     }
   }
 
@@ -74,15 +88,11 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
 
     try {
       const data = new FormData()
-
       for (const key in formData) {
         data.append(key, formData[key as keyof typeof formData])
       }
-
-      // Append product ID
       data.append('_id', productToBeUpdate._id)
 
-      // Append new images (optional)
       if (images) {
         Array.from(images).forEach((file) => {
           data.append('images', file)
@@ -94,7 +104,7 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
       })
 
       if (res?.status === 200) {
-        Swal.fire({ title: 'Product is updated', icon: 'success' })
+        Swal.fire({ title: 'Product updated!', icon: 'success' })
         setImages(null)
         setPreviewUrls([])
         setShowUpdateForm(false)
@@ -108,7 +118,7 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#000000b0] bg-opacity-50 flex justify-center items-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-[#000000b0] flex justify-center items-center p-4 overflow-y-auto">
       <div className="relative bg-white w-full max-w-4xl rounded-lg shadow-lg p-6 max-h-full overflow-y-auto">
         <button
           onClick={() => setShowUpdateForm(false)}
@@ -130,13 +140,15 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
                 name={key}
                 value={formData[key as keyof typeof formData]}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600"
+                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>
           ))}
 
           <div className="col-span-1 md:col-span-2">
-            <label className="text-gray-700 font-medium block mb-1">Upload New Images (optional)</label>
+            <label className="text-gray-700 font-medium block mb-1">
+              Upload New Images (optional)
+            </label>
             <input
               type="file"
               name="images"
@@ -150,12 +162,17 @@ export default function ProductEditForm({ setChange,change,setShowUpdateForm, pr
           {previewUrls.length > 0 && (
             <div className="col-span-2 grid grid-cols-3 gap-2">
               {previewUrls.map((url, idx) => (
-                <img
-                  key={idx}
-                  src={url}
-                  alt={`preview-${idx}`}
-                  className="w-full h-32 object-cover rounded-md border"
-                />
+                <div key={idx} className="relative">
+                  <X
+                    onClick={() => removeSelectedImage(idx)}
+                    className="absolute top-1 right-1 cursor-pointer bg-white rounded-full p-1 shadow"
+                  />
+                  <img
+                    src={url}
+                    alt={`preview-${idx}`}
+                    className="w-full h-32 object-cover rounded-md border"
+                  />
+                </div>
               ))}
             </div>
           )}

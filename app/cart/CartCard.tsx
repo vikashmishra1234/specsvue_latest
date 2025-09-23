@@ -64,7 +64,7 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
 
         {/* Actions */}
         <div className="flex gap-3 md:pt-4 md:justify-end">
-        <RemoveProductFromCartButton setChange={setChange} lensId={data?.lensId} userId={userId}/>
+        <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
         </div>
       </div>
     </div>

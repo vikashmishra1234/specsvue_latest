@@ -28,6 +28,8 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
   const [loading,setLoading] = useState(false);
   const router = useRouter();
 
+  let addressId:string|null = null;
+
   // Set first address as default selected
   useEffect(() => {
     console.log(cart)
@@ -52,6 +54,7 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
       const res = await axios.post("/api/add-address", payload);
       if(res){
         setSelectedAddressId(res?.data?.data?._id);
+        addressId = res?.data?.data?._id
         setShowForm(false)
         handleProceed()
       }
@@ -68,8 +71,9 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
   };
 
   const handleProceed = () => {
-    if (selectedAddressId&&cart?._id) {
-      router.push(`/proceed-to-payment/review?addressId=${selectedAddressId}&cartId=${cart._id}`)
+    if ((selectedAddressId || addressId)&&cart?._id) {
+      const actualAddressId = selectedAddressId || addressId
+      router.push(`/proceed-to-payment/review?addressId=${actualAddressId}&cartId=${cart._id}`)
     } else {
       Swal.fire({
         title:"Please Select An Address",
@@ -127,7 +131,6 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
             <input name="landmark" value={formData.landmark} onChange={handleChange} placeholder="Landmark (optional)" className="w-full p-3 rounded-md bg-[#e6e6f9]" />
             <input name="name" value={formData.name} onChange={handleChange} placeholder="Name*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
             <div className="flex items-center">
-              <span className="px-4 py-3 bg-[#e6e6f9] rounded-l-md border border-r-0">+91</span>
               <input  name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone number*" className="flex-1 p-3 rounded-r-md bg-[#e6e6f9]" required />
             </div>
             <button disabled={loading} onClick={handleAddAddress} className="bg-[#0d0c22] text-white px-6 py-2 rounded-lg font-semibold">
@@ -145,11 +148,11 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
         <div className="text-sm space-y-2 border-t pt-4 border-gray-200">
           <div className="flex justify-between">
             <span>Total item price</span>
-            <span>₹{cart?.cartTotal + 10000}</span>
+            <span>₹{cart?.cartTotal + 947}</span>
           </div>
           <div className="flex justify-between text-green-600">
             <span>Total discount</span>
-            <span>−₹10000</span>
+            <span>−₹947</span>
           </div>
           <div className="flex justify-between font-semibold pt-2 text-[#0d0c22]">
             <span>Total payable</span>
@@ -157,7 +160,7 @@ const Address: React.FC<Props> = ({  userId, email, cart, existingAddresses }) =
           </div>
         </div>
 
-        <button onClick={handleProceed} className="mt-6 w-full bg-[#0d0c22] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">
+        <button onClick={handleProceed} className="mt-6 w-full cursor-pointer bg-[#0d0c22] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition">
           Deliver to this Address
         </button>
       </div>

@@ -9,7 +9,7 @@ import FilterSection from "./FilterSection";
 
 const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
   
-  const { data: allProducts, loading, filters } = useProducts(6, "all");
+  const { data: allProducts, loading, filters } = useProducts(12, "all");
   const [products, setProducts] = useState<any[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -230,6 +230,7 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
                   frameSize={item?.frameSize}
                   brandName={item?.brandName}
                   productId={item?._id}
+                  
                 />
               ))}
             </div>

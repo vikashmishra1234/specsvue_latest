@@ -10,11 +10,12 @@ import { useSession } from "next-auth/react";
 
 // Data for navigation links
 const navLinks = [
-  { label: "EYEGLASSES", href: "/products/eyeglasses" },
-  { label: "SCREEN GLASSES", href: "/products/screenglasses" },
-  { label: "KIDS GLASSES", href: "/products/kids" },
-  { label: "CONTACT LENS", href: "/products/contact-lens" },
-  { label: "SUNGLASSES", href: "/products/sunglasses" },
+  { label: "Eyeglasses", href: "/products/eyeglasses" },
+  { label: "Screenglasses", href: "/products/screenglasses" },
+  { label: "kids Glasses", href: "/products/kidsglasses" },
+  { label: "Contact Lens", href: "/contact-lenses" },
+  { label: "Sunglasses", href: "/products/sunglasses" },
+  { label: "Branded Glasses", href: "/products/brandedglasses" },
 ];
 
 const Header = () => {

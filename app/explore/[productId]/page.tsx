@@ -166,7 +166,7 @@ const ProductInformation = memo(({ product, onBuyNowClick }: { product: IProduct
 
       <button
         onClick={onBuyNowClick}
-        className="w-full transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
+        className="w-full cursor-pointer transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
       >
         Select Lens & Buy Now
       </button>
@@ -236,6 +236,7 @@ const LensSelectorModal = memo(({ product, onClose }: { product: IProduct, onClo
       const payload = {
         userId,
         productId: product._id,
+        cartProductId:product._id,
         lensId: lens.lensId,
         price: total,
         lensMaterial: lens.material,

@@ -5,6 +5,7 @@ import Product from "@/models/Product";
 const CartItemSchema = new Schema(
   {
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    cartProductId:{type:String},
     lensId: { type: String, required: true },
     lensName: { type: String, required: true },
     lensCoating: { type: String, required: true },

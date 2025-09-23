@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
       lensName,
       lensCoating,
       lensMaterial,
+      cartProductId,
       price,
     } = cartData;
 
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
       !lensCoating ||
       !lensMaterial ||
       !price ||
+      !cartProductId ||
       !lensId
     ) {
       return NextResponse.json(
@@ -45,6 +47,7 @@ export async function POST(req: NextRequest) {
       lensName,
       lensCoating,
       lensMaterial,
+      cartProductId,
       quantity: 1,
       price: priceAsNumber,
     };
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
       const existingItem = cart.items.find(
         (item: any) =>
           item.lensId === lensId &&
-          item.productId.toString() === productId
+          item.cartProductId === cartProductId
       );
 
       if (existingItem) {

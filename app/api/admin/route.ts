@@ -52,6 +52,8 @@ export async function POST(req: Request) {
     const { fields, files } = await parseForm(req)
 
     // Convert any single-item array fields to strings
+    console.log("fields",fields)
+    console.log("files",files)
     const normalizedFields: Record<string, string|string[]> = {}
     for (const key in fields) {
       const value = fields[key]
@@ -70,6 +72,8 @@ export async function POST(req: Request) {
       fs.unlinkSync(file.filepath)
     }
     normalizedFields.images = uploadedImageUrls
+    console.log("uploaded images",uploadedImageUrls)
+    console.log("normalized images",normalizedFields)
       const newProduct = new Product(normalizedFields)
       
       await newProduct.save()

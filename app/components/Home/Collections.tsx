@@ -3,6 +3,7 @@ import {motion} from 'framer-motion'
 import Image from 'next/image'
 import {ChevronRight} from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Collections() {
   const router = useRouter()
@@ -44,45 +45,52 @@ export default function Collections() {
               description: "Stylish frames with premium lenses for everyday vision",
               image: "/images/Eye_Glasses.avif",
               color: "from-blue-500 to-purple-500",
+               href: "/products/eyeglasses"
             },
             {
               title: "Sunglasses",
               description: "Protect your eyes with UV-blocking fashionable shades",
               image: "/images/Sunglasses.avif",
               color: "from-purple-500 to-pink-500",
+               href: "/products/sunglasses"
             },
             {
               title: "Screenglasses",
               description: "Reduce eye strain with blue light filtering technology",
               image: "/images/Screenglasses.avif",
               color: "from-pink-500 to-orange-500",
+               href: "/products/screenglasses"
             },
             {
               title: "Contact Lenses",
               description: "Comfortable contacts for clear vision without frames",
               image: "/images/Contact_Lenses.avif",
               color: "from-green-500 to-teal-500",
+              href: "/contact-lenses"
             },
             {
               title: "Kids Glasses",
               description: "Durable and colorful frames designed for children",
               image: "/images/kids-logo.png",
               color: "from-amber-500 to-red-500",
+               href: "/products/kidsglasses" 
             },
             {
-              title: "Power Sunglasses",
+              title: "Branded Glasses",
               description: "Prescription sunglasses for clear vision outdoors",
               image: "/images/sunglasses.png",
               color: "from-teal-500 to-green-500",
+              href: "/products/brandedglasses" 
             },
           ].map((collection, index) => (
+           <Link key={index} href={collection.href}>
             <motion.div
-              key={index}
+              
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-xl"
+              className="group z-10 relative overflow-hidden rounded-xl"
             >
               <div className="aspect-[3/4] overflow-hidden">
                 <Image
@@ -100,13 +108,10 @@ export default function Collections() {
                 <h3 className="text-xl font-bold mb-2">{collection.title}</h3>
                 <p className="mb-4 opacity-90">{collection.description}</p>
                 <motion.button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigate(collection.title);
-                  }}
+                  
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center w-full sm:w-10 h-10 rounded-full bg-white text-gray-900 group-hover:w-32 transition-all duration-300 sm:overflow-hidden"
+                  className="flex z-0 cursor-pointer items-center justify-center w-full sm:w-10 h-10 rounded-full bg-white text-gray-900 group-hover:w-32 transition-all duration-300 sm:overflow-hidden"
                   type="button"
                 >
                   <span className="sm:hidden group-hover:inline mr-1">Explore</span>
@@ -114,6 +119,7 @@ export default function Collections() {
                 </motion.button>
               </div>
             </motion.div>
+           </Link>
           ))}
         </div>
       </div>

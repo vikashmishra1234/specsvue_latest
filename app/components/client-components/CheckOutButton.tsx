@@ -9,7 +9,6 @@ export const handleCheckout = async (
   setIsLoading: (value: boolean) => void
 ) => {
   if (amount && userId && addressId) {
-    alert(process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID)
     try {
       setIsLoading(true);
       const res = await axios.post('/api/razor-pay-order', { amount });

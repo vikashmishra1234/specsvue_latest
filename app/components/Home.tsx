@@ -31,7 +31,7 @@ const Home = ()=>{
       <Collections/>
       <Feature/>
       <Contact/>
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   )
 }

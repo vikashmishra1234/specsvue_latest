@@ -20,7 +20,7 @@ export function PayNowButton({
   return (
     <button
       onClick={() => handleCheckout(cartTotal, userId,addressId,router,setLoading)}
-      className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-all font-medium"
+      className="bg-gray-900 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-all font-medium"
       disabled={loading}
     >
       {loading ? "Placing Order..." : "Pay Now"}

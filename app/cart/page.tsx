@@ -49,8 +49,8 @@ export default  function ProductsPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left - Cart Items */}
           <div className="flex-1 space-y-6">
-            {currentUserCart&&currentUserCart ? (
-              currentUserCart?.items?.map((data: any, ind: number) => (
+            {currentUserCart ? (
+              currentUserCart?.items.map((data: any, ind: number) => (
                 <div key={ind}>
                   <CartCard setChange={setChange} session={session} data={data} />
                 </div>
