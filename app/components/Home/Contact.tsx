@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Instagram, Facebook, Twitter } from "lucide-react";
+import { Instagram, Facebook, Youtube } from "lucide-react";
 
 const Contact = () => {
   return (
@@ -26,9 +26,9 @@ const Contact = () => {
             <div className="space-y-5">
               {[
                 { icon: "📍", title: "Visit Our Store", info: "Plot no. 1 Krishna Vihar, BSA Engineering College Rd, near Old Police Chowki, Avas Vikas Colony, Mathura, Uttar Pradesh 281004" },
-                { icon: "📞", title: "Call Us", info: "+1 (555) 123-4567" },
-                { icon: "✉️", title: "Email Us", info: "info@specsvue.com" },
-                { icon: "⏰", title: "Opening Hours", info: "Monday - Friday: 9am - 6pm\nSaturday: 10am - 4pm\nSunday: Closed" }
+                { icon: "📞", title: "Call Us", info: "+91 8630111264" },
+                { icon: "✉️", title: "Email Us", info: "specsvue@gmail.com" },
+                { icon: "⏰", title: "Opening Hours", info: "Monday - Sunday: 10am - 9pm" }
               ].map((item, index) => (
                 <div key={index} className="flex items-start">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-900 text-white flex items-center justify-center text-xl">
@@ -44,9 +44,9 @@ const Contact = () => {
 
             <div className="mt-8 flex space-x-4">
               {[
-                { href: "#", label: "Instagram", icon: <Instagram size={20} /> },
-                { href: "#", label: "Facebook", icon: <Facebook size={20} /> },
-                { href: "#", label: "Twitter", icon: <Twitter size={20} /> }
+                { href: "https://www.instagram.com/specsvue_", label: "Instagram", icon: <Instagram size={20} /> },
+                { href: "https://facebook.com/specsvue", label: "Facebook", icon: <Facebook size={20} /> },
+                { href: "https://youtube.com/@specsvue?si=BsrQMbVLQ2wb9U_-", label: "YouTube", icon: <Youtube size={20} /> }
               ].map((social, index) => (
                 <motion.a
                   key={index}
