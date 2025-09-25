@@ -78,7 +78,7 @@ const Sidebar = ({ setShowThis }: SidebarProps) => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-lg shadow-md"
+        className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-white border border-gray-300 rounded-lg shadow-md"
       >
         {isMobileMenuOpen ? (
           <X className="h-6 w-6 text-gray-600" />

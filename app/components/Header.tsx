@@ -55,7 +55,7 @@ const Header = () => {
           
           {/* Logo */}
           <Link href="/" className="text-sm font-bold text-white">
-            <Image src={'/images/site_logo.png'} height={100} width={100} alt="Site Logo"/>
+            <Image src={'/images/site_logo.png'} className="w-[70px] md:w-unset" height={100} width={100} alt="Site Logo"/>
           </Link>
 
           {/* Desktop Links - Centered */}
