@@ -5,6 +5,7 @@ import { Readable } from 'stream'
 import { v2 as cloudinary } from 'cloudinary'
 import fs from 'fs'
 import Product from '@/models/Product'
+import { connectToDatabase } from '@/lib/dbConnect'
 
 // Disable Next.js body parsing (important for formidable)
 export const config = {
@@ -48,12 +49,12 @@ const parseForm = async (req: Request) => {
 // POST handler
 export async function POST(req: Request) {
   try {
+    await connectToDatabase()
     
     const { fields, files } = await parseForm(req)
 
     // Convert any single-item array fields to strings
-    console.log("fields",fields)
-    console.log("files",files)
+  
     const normalizedFields: Record<string, string|string[]> = {}
     for (const key in fields) {
       const value = fields[key]
