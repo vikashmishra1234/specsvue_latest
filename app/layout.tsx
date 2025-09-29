@@ -7,7 +7,7 @@ import Script from "next/script";
 import Footer from "./components/Home/Footer";
 
 export const metadata: Metadata = {
-  title: "SpecsVaue | Eyeglasses, Sunglasses & Contact Lenses Online",
+  title: "SpecsVue | Eyeglasses, Sunglasses & Contact Lenses Online",
   description:
     "Shop high-quality eyeglasses, sunglasses, kids' glasses, and contact lenses at SpecsVaue. Affordable prices, modern styles, and prescription-ready frames.",
   keywords: [
@@ -18,22 +18,22 @@ export const metadata: Metadata = {
     "kids glasses",
     "affordable eyewear",
   ],
-  authors: [{ name: "SpecsVaue" }],
+  authors: [{ name: "SpecsVue" }],
   openGraph: {
-    title: "SpecsVaue | Eyewear for Everyone",
+    title: "SpecsVue | Eyewear for Everyone",
     description:
-      "Discover SpecsVaue's collection of eyeglasses, sunglasses, and contact lenses. Stylish, durable, and budget-friendly eyewear for all.",
+      "Discover SpecsVue's collection of eyeglasses, sunglasses, and contact lenses. Stylish, durable, and budget-friendly eyewear for all.",
     url: "https://specsvaue.com",
-    siteName: "SpecsVaue",
+    siteName: "SpecsVue",
     locale: "en_IN",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SpecsVaue | Affordable Eyewear",
+    title: "SpecsVue | Affordable Eyewear",
     description:
       "Shop eyeglasses, sunglasses, and contact lenses online with SpecsVaue. Fashionable frames at the best prices.",
-    creator: "@specsvaue",
+    creator: "@specsaue",
   },
   icons: {
     icon: "/favicon.ico",
