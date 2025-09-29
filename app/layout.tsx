@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Shop high-quality eyeglasses, sunglasses, kids' glasses, and contact lenses at SpecsVaue. Affordable prices, modern styles, and prescription-ready frames.",
   keywords: [
-    "SpecsVaue",
+    "SpecsVue",
     "eyeglasses online",
     "sunglasses",
     "contact lenses",
