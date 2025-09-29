@@ -15,15 +15,6 @@ const Home = ()=>{
   return (
     <div className="min-h-screen">
       <div className="min-h-screen  bg-gray-100 py-10 px-4">
-      <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-2xl text-center md:text-4xl md:py-8 font-bold mb-4"
-          >
-           Find Your Perfect Pair - Shop Stylish Specs Today!
-          </motion.h2>
         <ProductsPage productType={null} />
     </div>
       <Collections/>
