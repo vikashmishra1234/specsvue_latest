@@ -18,15 +18,16 @@ const slides = [
     alt: "Collection of premium prescription glasses frames",
     nav: "prescription",
   },
-  {
+{
   id: 2,
-  title: "Style Meets Vision",
-  description: "Step into a world where fashion and function unite. Our curated eyewear blends modern aesthetics with all-day comfort—designed to make every glance unforgettable.",
+  title: "SpecsVue – Redefining Eyewear Fashion",
+  description: "Discover premium spectacles and sunglasses at SpecsVue.in – where style, clarity, and comfort come together. From modern trends to timeless classics, find eyewear that enhances your look and vision.",
   image: "/images/banner-4.png",
-  cta: "Discover Our Collection",
-  alt: "VisionHub eyewear shop showcase featuring stylish glasses",
+  cta: "Shop Eyewear Now",
+  alt: "SpecsVue eyewear store showcasing stylish spectacles and sunglasses",
   nav: "products",
 }
+
 
 ];
 
