@@ -98,9 +98,9 @@ const Hero = () => {
                   transition={{ duration: 0.4, ease: "easeInOut", delay: 0.2 }}
                   className="max-w-3xl"
                 >
-                  <h2 className="text-3xl text-center sm:text-left sm:text-5xl md:text-6xl font-bold text-white mb-6">
+                  <h1 className="text-3xl text-center sm:text-left sm:text-5xl md:text-6xl font-bold text-white mb-6">
                     {currentSlideData.title}
-                  </h2>
+                  </h1>
                   <p className="text-lg text-center sm:text-left sm:text-xl text-gray-200 mb-8 max-w-xl">
                     {currentSlideData.description}
                   </p>
