@@ -2,16 +2,11 @@
 import {motion} from 'framer-motion'
 import Image from 'next/image'
 import {ChevronRight} from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Collections() {
-  const router = useRouter()
   
-  const handleNavigate = (collectionTitle:string) => {
-    // Prevent default behavior and use router.push instead
-    router.push(`/collection?type=${collectionTitle}`)
-  }
+
   
   return (
     <section id="collections" className="py-20">

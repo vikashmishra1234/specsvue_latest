@@ -55,7 +55,7 @@ const UserLogin = () => {
             <div className="mt-8">
               <button
                 onClick={() => signIn("google")}
-                className="flex items-center justify-center w-full gap-3 px-4 py-3 text-sm font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
+                className="flex items-center cursor-pointer justify-center w-full gap-3 px-4 py-3 text-sm font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
               >
                 <GoogleIcon />
                 <span>Sign in with Google</span>
