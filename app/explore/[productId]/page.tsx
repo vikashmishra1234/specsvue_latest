@@ -8,6 +8,8 @@ import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { ChevronRight, X } from 'lucide-react';
 import { lenses as LENS_DATA } from "@/LensData.json";
+import Loading from '@/app/components/Loading';
+import LensSelectorModal from '../LensSelectorModal';
 
 // --- TYPE DEFINITIONS ---
 interface IProduct {
@@ -29,12 +31,7 @@ interface LensOption {
   lensId: string;
 }
 
-// --- CUSTOM HOOKS ---
 
-/**
- * Custom hook for fetching product data.
- * Manages loading and error states automatically.
- */
 const useProduct = (productId: string | undefined | string[]) => {
   const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,11 +72,7 @@ const useProduct = (productId: string | undefined | string[]) => {
 
 
 
-const LoadingSpinner = () => (
-  <div className="flex min-h-screen items-center justify-center bg-gray-50">
-    <div className="h-16 w-16 animate-spin rounded-full border-4 border-dashed border-blue-600"></div>
-  </div>
-);
+
 
 const ErrorDisplay = ({ message }: { message: string }) => (
   <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 text-center">
@@ -215,124 +208,6 @@ ProductDetailsSection.displayName = "ProductDetailsSection";
 
 
 
-const LensSelectorModal = memo(({ product, onClose }: { product: IProduct, onClose: () => void }) => {
- 
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [isSubmitting, setSubmitting] = useState(false);
-
-  // Redirect if not logged in
- 
-
-  const handleAddToCart = useCallback(async (lens: LensOption,lensName:string) => {
-  
-    setSubmitting(true);
-    try {
-      const framePrice = parseFloat(product.price) || 0;
-      const total = lens.price + framePrice;
-      console.log(lens)
-      const userId = session?(session.user.userId):localStorage.getItem("guestId");
-      const payload = {
-        userId,
-        productId: product._id,
-        cartProductId:product._id,
-        lensId: lens.lensId,
-        price: total,
-        lensMaterial: lens.material,
-        lensCoating: lens.coating,
-        lensName
-      };
-
-      await axios.post("/api/add-to-cart", payload);
-      localStorage.setItem("guestId",userId as string)
-      router.push("/cart");
-
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      alert("Something went wrong. Please try again.");
-      setSubmitting(false);
-    }
-  }, [product, session, status, router]);
-
-  return (
-    <LazyMotion features={domAnimation}>
-      <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-sm">
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "spring", damping: 30, stiffness: 250 }}
-          className="relative h-full w-full max-w-lg overflow-y-auto bg-white shadow-2xl"
-        >
-          {isSubmitting && <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70"><LoadingSpinner /></div>}
-          <div className="p-6">
-            <header className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Select Yourm Lens</h2>
-              <button onClick={onClose} className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800">
-                <X size={24} />
-              </button>
-            </header>
-
-            <div className="space-y-4">
-              {LENS_DATA.map((category, index) => (
-                <div
-                  key={category.name}
-                  onClick={() => setSelectedCategory(selectedCategory === index ? null : index)}
-                  className={`cursor-pointer rounded-xl p-5 transition-all ${
-                    selectedCategory === index ? 'bg-blue-100 shadow-md ring-2 ring-blue-500' : 'bg-gray-50 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-gray-800">{category.name}</h3>
-                      <p className="text-sm text-gray-600">{category.description}</p>
-                    </div>
-                    <ChevronRight className={`transform transition-transform ${selectedCategory === index ? 'rotate-90' : ''}`} />
-                  </div>
-                  <AnimatePresence>
-                    {selectedCategory === index && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginTop: '16px' }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        className="overflow-hidden"
-                      >
-                        {category.data.map((lens) => (
-                          <div
-                            key={lens.lensId}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddToCart(lens,category.name);
-                            }}
-                            className="mt-2 flex cursor-pointer items-center justify-between rounded-lg bg-white p-4 transition hover:bg-blue-50"
-                          >
-                            <div>
-                              <p className="font-semibold">{lens.material}</p>
-                              <p className="text-sm text-gray-500">{lens.coating}</p>
-                            </div>
-                            <p className="text-lg font-bold">₹{lens.price.toFixed(2)}</p>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-8 rounded-xl bg-gray-100 p-4 text-lg font-bold text-gray-800 flex justify-between">
-              <span>Frame Price:</span>
-              <span>₹{parseFloat(product.price).toFixed(2)}</span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </LazyMotion>
-  );
-});
-LensSelectorModal.displayName = "LensSelectorModal";
-
 
 
 export default function ExploreProductPage() {
@@ -340,7 +215,7 @@ export default function ExploreProductPage() {
   const { product, loading, error } = useProduct(params?.productId);
   const [isLensSelectorOpen, setLensSelectorOpen] = useState(false);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <Loading />;
   if (error || !product) return <ErrorDisplay message={error || "Product not found."} />;
 
   return (

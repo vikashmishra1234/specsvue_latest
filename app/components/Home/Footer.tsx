@@ -41,9 +41,10 @@ const Footer = () => {
 
         {/* Extra Links */}
         <div className="flex flex-wrap justify-center gap-4 text-gray-400 text-sm">
-          <Link href="/help" className="hover:text-white transition-colors">Help</Link>
-          <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-          <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link href="#contact-us" className="hover:text-white transition-colors">Help</Link>
+          <Link href="#contact-us" className="hover:text-white transition-colors">Contact</Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link href="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
         </div>
 
         {/* Copyright */}

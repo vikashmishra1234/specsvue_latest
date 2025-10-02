@@ -1,7 +1,6 @@
 "use client"
 import CartCard from "./CartCard";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
 import { ShoppingCart } from "lucide-react";
 import getUserCart from "@/actions/getUserCart";
 import { useEffect, useState } from "react";
@@ -44,7 +43,7 @@ export default  function ProductsPage() {
 
     <div className="bg-[#fbf9f7] min-h-screen py-10 px-4 md:px-10">
       <div className="max-w-7xl m-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Your Cart</h1>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left - Cart Items */}

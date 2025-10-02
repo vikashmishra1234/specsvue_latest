@@ -3,7 +3,6 @@
 import ProductCard from "./ProductCard";
 import Loading from "../components/Loading";
 import { useProducts } from "@/actions/fetchProducts";
-import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
 import FilterSection from "./FilterSection";
 
@@ -74,10 +73,10 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
      
 
       {/* Filters & Products */}
-      <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-4 py-4 sm:py-12 gap-8">
+      <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-0 md:px-4  sm:py-12 gap-8">
         {/* Filters */}
         <aside className="lg:w-1/4 w-full">
-          <div className="lg:hidden mb-4">
+          <div className="lg:hidden mb-1">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className="bg-gray-600 text-white px-4 py-2 rounded shadow"
@@ -89,10 +88,11 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
           <div
             className={`space-y-6 ${
               isFilterOpen ? "block" : "hidden"
-            } lg:block bg-white p-4 rounded shadow-md sticky top-10`}
+            } lg:block bg-white p-4 mt-4 rounded shadow-md sticky top-10`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold">Apply Filters</h3>
+            <div className="flex items-center justify-between mb-4 ">
+              <h3 className="text-xl hidden md:block font-semibold">Apply Filters</h3>
+              <h3  onClick={() => setIsFilterOpen(!isFilterOpen)} className="text-sm border border-black px-3 py-2 rounded-md cursor-pointer md:hidden font-semibold">Apply Filters</h3>
               {isAnyFilterSelected && (
                 <button
                   onClick={handleResetFilters}
@@ -219,7 +219,7 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
           {products?.length === 0 ? (
             <p className="text-center text-gray-500">No products found</p>
           ) : (
-            <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {products?.map((item: any, index: number) => (
                 <ProductCard
                   key={index}
