@@ -44,7 +44,7 @@ const Footer = () => {
           <Link href="#contact-us" className="hover:text-white transition-colors">Help</Link>
           <Link href="#contact-us" className="hover:text-white transition-colors">Contact</Link>
           <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link href="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+          <Link href="/refund-policies" className="hover:text-white transition-colors">Refund Policy</Link>
         </div>
 
         {/* Copyright */}
