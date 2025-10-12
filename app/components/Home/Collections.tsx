@@ -66,14 +66,14 @@ export default function Collections() {
             {
               title: "Kids Glasses",
               description: "Durable and colorful frames designed for children",
-              image: "/images/kids-logo.png",
+              image: "/images/kids_glasses.jpg",
               color: "from-amber-500 to-red-500",
                href: "/products/kidsglasses" 
             },
             {
               title: "Branded Glasses",
               description: "Prescription sunglasses for clear vision outdoors",
-              image: "/images/sunglasses.png",
+              image: "/images/branded-glasses.jpg",
               color: "from-teal-500 to-green-500",
               href: "/products/brandedglasses" 
             },
