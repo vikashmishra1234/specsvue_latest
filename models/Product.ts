@@ -28,6 +28,7 @@ const ProductSchema = new Schema(
     condition: { type: String },
     templeColor: { type: String },
     price: { type: String },
+    stock: { type: String },
     discount: { type: String },
     images: { type: [String] }
   },

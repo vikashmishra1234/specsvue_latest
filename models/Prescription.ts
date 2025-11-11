@@ -1,36 +1,14 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema, models, model, InferSchemaType } from "mongoose";
 
-export interface IPrescription extends Document {
-    userId:string;
-
-  refrRE: string;
-  refrLE: string;
-  dsRE: string;
-  dsLE: string;
-  dcRE: string;
-  dcLE: string;
-  axisRE: string;
-  axisLE: string;
-  addRE: string;
-  addLE: string;
-  pdRE: string;
-  pdLE: string;
-  diaRE: string;
-  diaLE: string;
-  fhRE: string;
-  fhLE: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-const PrescriptionSchema: Schema = new Schema(
+const PrescriptionSchema = new Schema(
   {
-    userId:{
-        type:String,
-        required:true
-    },
-    refrRE: String,
-    refrLE: String,
+    // Personal details
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    age: { type: String },
+    gender: { type: String },
+
+    // Eye prescription details
     dsRE: String,
     dsLE: String,
     dcRE: String,
@@ -49,5 +27,9 @@ const PrescriptionSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.models.Prescription ||
-  mongoose.model<IPrescription>('Prescription', PrescriptionSchema);
+export type IPrescription = InferSchemaType<typeof PrescriptionSchema>;
+
+const Prescription =
+  models.Prescription || model<IPrescription>("Prescription", PrescriptionSchema);
+
+export default Prescription;

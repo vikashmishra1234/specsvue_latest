@@ -44,6 +44,7 @@ export default function ProductEditForm({
     templeColor: productToBeUpdate.templeColor,
     price: productToBeUpdate.price,
     discount: productToBeUpdate.discount,
+    stock: productToBeUpdate?.stock,
   })
 
   const [images, setImages] = useState<FileList | null>(null)

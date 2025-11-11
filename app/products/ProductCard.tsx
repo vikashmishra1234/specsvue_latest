@@ -11,6 +11,7 @@ interface ProductCardProps {
   frameSize: string;
   brandName: string;
   productId: any;
+  stock:string;
   reviewCount?: number;
 }
 
@@ -22,6 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   frameMaterial,
   frameSize,
   brandName,
+  stock,
   reviewCount = 8,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -59,7 +61,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div onClick={() => router.push(`/explore/${productId}`)}  className="bg-white cursor-pointer w-[150px] md:w-[180px] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative">
+    <div onClick={() => {
+       Number(stock)<=0?'':router.push(`/explore/${productId}`);
+
+      }}  className="bg-white cursor-pointer w-[150px] md:w-[180px] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative">
       {discount > 0 && (
         <div className="absolute top-0 left-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full z-10">
           {discount}% OFF
@@ -96,8 +101,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {finalRating.toFixed(1)} ({reviewCount})
             </span>
           </div>
+         
         </div>
 
+
+          <div className="flex items-center gap-1 mt-2">
+            <span className="text-xs text-gray-500">
+              {
+                Number(stock)<=0?<span className="text-red-500 ">out of stock</span>:<span>Stock: {stock}</span>
+              }
+             
+            </span>
+          </div>
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-bold text-gray-800">
               ₹{Number(price)}

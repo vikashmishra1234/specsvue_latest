@@ -1,4 +1,7 @@
-import Link from "next/link"
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { label: "Eyeglasses", href: "/products/eyeglasses" },
@@ -7,9 +10,16 @@ const navLinks = [
   { label: "Contact Lens", href: "/contact-lenses" },
   { label: "Sunglasses", href: "/products/sunglasses" },
   { label: "Branded Glasses", href: "/products/brandedglasses" },
-]
+];
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  // ✅ Hide footer on admin dashboard (and optionally any /admin page)
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="bg-gray-900 text-white py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
@@ -29,9 +39,9 @@ const Footer = () => {
         {/* Product Links */}
         <div className="flex flex-wrap justify-center gap-4 text-gray-400 text-sm">
           {navLinks.map((link) => (
-            <Link 
-              key={link.href} 
-              href={link.href} 
+            <Link
+              key={link.href}
+              href={link.href}
               className="hover:text-white transition-colors"
             >
               {link.label}
@@ -41,10 +51,18 @@ const Footer = () => {
 
         {/* Extra Links */}
         <div className="flex flex-wrap justify-center gap-4 text-gray-400 text-sm">
-          <Link href="#contact-us" className="hover:text-white transition-colors">Help</Link>
-          <Link href="#contact-us" className="hover:text-white transition-colors">Contact</Link>
-          <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link href="/refund-policies" className="hover:text-white transition-colors">Refund Policy</Link>
+          <Link href="#contact-us" className="hover:text-white transition-colors">
+            Help
+          </Link>
+          <Link href="#contact-us" className="hover:text-white transition-colors">
+            Contact
+          </Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">
+            Privacy Policy
+          </Link>
+          <Link href="/refund-policies" className="hover:text-white transition-colors">
+            Refund Policy
+          </Link>
         </div>
 
         {/* Copyright */}
@@ -53,7 +71,7 @@ const Footer = () => {
         </p>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

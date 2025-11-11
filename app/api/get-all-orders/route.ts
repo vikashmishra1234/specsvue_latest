@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     const orders = await Order.find({
       userId,
       // orderStatus: { $ne: "cancelled" },
-    }).populate("items.productId");
+    })
 
     return NextResponse.json(orders, { status: 200 });
   } catch (err) {

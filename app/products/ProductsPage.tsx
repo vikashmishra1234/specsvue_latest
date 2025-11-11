@@ -16,7 +16,7 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>(productType?{productType:[productType]}:{});
 
   // Price range
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
 
   const priceMin = useMemo(() => Math.min(...(allProducts || []).map((p:any) => p.price)), [allProducts]);
   const priceMax = useMemo(() => Math.max(...(allProducts || []).map((p:any) => p.price)), [allProducts]);
@@ -230,6 +230,7 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
                   frameSize={item?.frameSize}
                   brandName={item?.brandName}
                   productId={item?._id}
+                  stock = {item?.stock}
                   
                 />
               ))}

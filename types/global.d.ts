@@ -33,5 +33,6 @@ declare global {
     updatedAt: string;
     weight: string;
     weightGroup: string;
+    stock: stock;
   }
 }

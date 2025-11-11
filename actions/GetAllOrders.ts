@@ -6,7 +6,7 @@ export default async function getAllOrders() {
   try {
     await connectToDatabase();
 
-    const orders = await Order.find({}).populate("items.productId")
+    const orders = await Order.find({})
 
     return {
       success: true,

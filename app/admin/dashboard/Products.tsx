@@ -10,6 +10,7 @@ import {
   Tag,
   Users,
   Palette,
+  Layers2,
 } from "lucide-react";
 import { deleteProduct } from "@/actions/deleteProduct";
 import Swal from "sweetalert2";
@@ -44,7 +45,7 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
     setSelectedProduct(product);
     setShowModal(true);
   };
-
+console.log(filteredProducts)
   const handleDeleteProduct = async (productId: string) => {
     const res = await deleteProduct(productId);
     if (res?.status === 200) {
@@ -82,18 +83,7 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
           <button className="mt-3 border px-4 rounded cursor-pointer hover:bg-gray-900 hover:text-white text-sm py-2 transition-all border-gray-700" onClick={()=>setShowForm(!showForm)}>Add Product</button>
         </div>
 
-        {/* Search Bar */}
-        {/* <div className="mb-6">
-          <div className="relative max-w-md">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-            />
-          </div>
-        </div> */}
+      
 
         {/* Products Count */}
         <div className="mb-6">
@@ -105,7 +95,7 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
 
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
@@ -159,6 +149,13 @@ const Products = ({ setChange,products,change }: ProductsProps) => {
                     <div className="flex items-center gap-2 text-xs text-gray-600">
                       <Palette className="h-3 w-3" />
                       <span>{product.frameColor}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      
+                      <Layers2 className="h-3 w-3" /> 
+                      <span className="font-semibold text-gray-900">
+                        stock: {product.stock}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-600">
                       <IndianRupee className="h-3 w-3" /> 

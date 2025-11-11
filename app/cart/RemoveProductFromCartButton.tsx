@@ -1,13 +1,10 @@
 "use client";
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 
 const RemoveProductFromCartButton: React.FC<any> = ({setChange, data, userId }) => {
-  console.log(data)
   const cartProductId = data?.cartProductId
   const lensId = data?.lensId
-  console.log(cartProductId)
-  console.log(lensId)
   const removeCartProduct = async () => {
     try {
       const res = await axios.delete("/api/remove-cart-item", {
@@ -17,13 +14,19 @@ const RemoveProductFromCartButton: React.FC<any> = ({setChange, data, userId }) 
           lensId
         },
       });
-      alert(res.data.message);
       setChange((prev:boolean)=>!prev)
     } catch (error) {
       alert("Error while removing item");
       console.log(error);
     }
   };
+  useEffect(()=>{
+    const stock = Number(data.productId?.stock);
+    if(stock<=0){
+      removeCartProduct()
+    }
+
+  },[])
   return (
     <button
       onClick={() => removeCartProduct()}

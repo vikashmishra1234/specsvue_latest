@@ -12,6 +12,7 @@ export const handleCheckout = async (
     try {
       setIsLoading(true);
       const res = await axios.post('/api/razor-pay-order', { amount });
+      setIsLoading(false);
       const data = res.data;
 
       const options = {
@@ -33,10 +34,11 @@ export const handleCheckout = async (
           try {
             setIsLoading(true);
             const verifyRes = await axios.post('/api/razor-pay-verify', body);
+            setIsLoading(false);
             const verifyData = verifyRes.data;
 
             if (verifyData.verified) {
-               handlePlaceOrder(addressId, response.razorpay_payment_id, router);
+               handlePlaceOrder(addressId, response.razorpay_payment_id, router,userId);
             } else {
               Swal.fire({
                 icon: 'error',
@@ -81,12 +83,17 @@ export const handleCheckout = async (
 const handlePlaceOrder = async (
   addressId: string,
   razorpay_payment_id: string,
-  router: any
+  router: any,
+  userId:string
 ) => {
   try {
     const res = await axios.post("/api/place-order", { addressId, razorpay_payment_id });
+    console.log('order response')
+    console.log(res)
 
     if (res.status === 200) {
+      const data = {...res.data,userId}
+      await axios.post('/api/send-bill',data);
       Swal.fire({
         icon: 'success',
         title: 'Order successful',

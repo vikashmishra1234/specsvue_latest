@@ -38,6 +38,7 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     templeColor: "",
     price: "",
     discount: "",
+    stock:''
   });
 
   const fields: any = {
@@ -66,6 +67,7 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     templeColor: "",
     price: "",
     discount: "",
+    stock:''
   };
 
   const [images, setImages] = useState<FileList | null>(null);
@@ -93,6 +95,7 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     "gender",
     "condition",
     "templeColor",
+    "stock",
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +134,7 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
+    console.log(formData)
     try {
       const data = new FormData();
       for (const key in formData) {
@@ -170,7 +173,6 @@ export default function ProductForm({ change, setShowForm, setChange }: Props) {
     }
   };
   const removeSelectedImage = (index: number) => {
-    console.log(previewUrls)
     // Update preview URLs
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
 

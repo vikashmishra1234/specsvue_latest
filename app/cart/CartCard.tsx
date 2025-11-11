@@ -10,7 +10,6 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
     quantity,
     productId,
   } = data;
-
   const framePrice = parseFloat(productId.price);
   const lensPrice = price - framePrice;
   const finalPrice = price * quantity;
@@ -63,7 +62,8 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 md:pt-4 md:justify-end">
+        <div className="flex gap-3 md:pt-4 justify-between">
+          <h4>Stock: {data.productId.stock}</h4>
         <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
         </div>
       </div>
