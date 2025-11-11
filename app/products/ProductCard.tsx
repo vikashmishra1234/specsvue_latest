@@ -62,7 +62,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div onClick={() => {
-       Number(stock)<=0?'':router.push(`/explore/${productId}`);
+      if(Number(stock)<=0) return 
+      router.push(`/explore/${productId}`);
 
       }}  className="bg-white cursor-pointer w-[150px] md:w-[180px] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 relative">
       {discount > 0 && (
