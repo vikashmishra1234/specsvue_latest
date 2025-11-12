@@ -12,13 +12,13 @@ interface AccountInfo{
 }
 
 export default function AdminSettings() {
-    const {data:session} = useSession()
     const [accountInfo,setAccountInfo] = useState<AccountInfo>({
         oldPassword:'',
         newUserName:'',
         newPassword:'',
         token:''
     })
+    const [loading,setLoading] = useState(false)
 
     const updateAccountInfo = async(e:any) =>{
         e.preventDefault();
@@ -57,15 +57,18 @@ export default function AdminSettings() {
           />
           <button
             type="submit"
-            className="mt-2 bg-white text-black font-medium py-2 rounded-lg hover:bg-gray-300 transition"
+            disabled={loading}
+            className="mt-2 bg-white cursor-pointer text-black font-medium py-2 rounded-lg hover:bg-gray-300 transition"
           >
-            Update
+           {
+            loading?"Updating...":"Update"
+           }
           </button>
         </form>
       </section>
 
       {/* Create Bill Section */}
-      <section >
+      <section className="hidden" >
        <AdminBillForm/>
       </section>
     </div>
