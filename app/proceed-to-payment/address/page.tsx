@@ -35,7 +35,7 @@ const Page = () => {
   }
 
   // Optional: Uncomment if you want to redirect when cart is empty
-  if (!products || products?.length === 0) {
+  if (!products) {
     alert("your cart is empty")
     router.push("/cart");
     return null;

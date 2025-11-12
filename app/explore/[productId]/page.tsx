@@ -130,8 +130,7 @@ const ProductImageGallery = memo(({ images }: { images: string[] }) => {
 ProductImageGallery.displayName = "ProductImageGallery";
 
 
-const ProductInformation = memo(({ product, onBuyNowClick }: { product: IProduct; onBuyNowClick: () => void }) => {
-
+const ProductInformation = memo(({ product, onBuyNowClick }: { product: IProduct; onBuyNowClick: (isAddToCart:boolean) => void }) => {
 
   return (
     <div className="flex h-full flex-col justify-center p-6 md:p-8">
@@ -158,10 +157,16 @@ const ProductInformation = memo(({ product, onBuyNowClick }: { product: IProduct
       </div>
 
       <button
-        onClick={onBuyNowClick}
+        onClick={()=>onBuyNowClick(false)}
         className="w-full cursor-pointer transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
       >
         Select Lens & Buy Now
+      </button>
+      <button
+        onClick={()=>onBuyNowClick(true)}
+        className="w-full cursor-pointer transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
+      >
+        Add to cart
       </button>
     </div>
   );
@@ -214,6 +219,7 @@ export default function ExploreProductPage() {
   const params = useParams();
   const { product, loading, error } = useProduct(params?.productId);
   const [isLensSelectorOpen, setLensSelectorOpen] = useState(false);
+  const [addToCart,setAddToCart] = useState<boolean>(true)
 
   if (loading) return <Loading />;
   if (error || !product) return <ErrorDisplay message={error || "Product not found."} />;
@@ -230,7 +236,10 @@ export default function ExploreProductPage() {
                 <ProductImageGallery images={product.images} />
               </div>
               <div className="border-t border-gray-200 lg:col-span-2 lg:border-l lg:border-t-0">
-                <ProductInformation product={product} onBuyNowClick={() => setLensSelectorOpen(true)} />
+                <ProductInformation product={product} onBuyNowClick={(isAddToCart:boolean) => {
+                  setAddToCart(isAddToCart);
+                  setLensSelectorOpen(true);
+                }} />
               </div>
             </div>
           </div>
@@ -240,7 +249,7 @@ export default function ExploreProductPage() {
 
       <AnimatePresence>
         {isLensSelectorOpen && (
-          <LensSelectorModal product={product} onClose={() => setLensSelectorOpen(false)} />
+          <LensSelectorModal addToCart={addToCart} product={product} onClose={() => setLensSelectorOpen(false)} />
         )}
       </AnimatePresence>
     </>

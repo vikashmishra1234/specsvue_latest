@@ -12,15 +12,17 @@ import axios from 'axios'
 
 // Initial state
 const initialState: any = {
-  products: [],
+  products: {},
   loading: false,
   error: null,
+  isFetch:false,
 }
 
 // Async thunk for fetching products from the database
 export const fetchProducts = createAsyncThunk<any, string>(
   'products/fetchProducts',
   async (userId, thunkAPI) => {
+    
     try {
       const response = await axios.get(`/api/get-cart?userId=${userId}`);
       return response.data?.cartProducts;
@@ -35,12 +37,14 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     resetProducts: (state) => {
-      state.products = []
+      state.products = {}
       state.loading = false
       state.error = null
+      state.isFetch = false
     },
     addToCart: (state, action: PayloadAction<any>) => {
-      state.products.push(action.payload); // Append new product to the existing array
+      state.products = action.payload // Append new product to the existing array
+      state.isFetch = true
     },
   },
   extraReducers: (builder) => {
@@ -52,6 +56,7 @@ const cartSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false
         state.products = action.payload
+        state.isFetch = true
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false

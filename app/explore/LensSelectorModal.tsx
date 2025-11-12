@@ -27,7 +27,7 @@ interface LensOption {
   lensId: string;
 }
 
-const LensSelectorModal = memo(({ product, onClose }: { product: IProduct; onClose: () => void }) => {
+const LensSelectorModal = memo(({addToCart, product, onClose }: { addToCart:boolean,product: IProduct; onClose: () => void }) => {
   const router = useRouter();
   const { data: session } = useSession();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -55,7 +55,13 @@ const LensSelectorModal = memo(({ product, onClose }: { product: IProduct; onClo
 
         await axios.post("/api/add-to-cart", payload);
         localStorage.setItem("guestId", userId as string);
-        router.push("/cart");
+        if(addToCart){
+          onClose();
+          alert("Added To Cart")
+        }
+        else{
+          router.push("/cart");
+        }
       } catch (error) {
         console.error("Add to cart failed:", error);
         alert("Something went wrong. Please try again.");
@@ -83,7 +89,7 @@ const LensSelectorModal = memo(({ product, onClose }: { product: IProduct; onClo
         <div className="p-6">
           {/* Header */}
           <header className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">🔍 Select Your Lens</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Select Your Lens</h2>
             <button
               onClick={onClose}
               className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"

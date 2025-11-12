@@ -1,7 +1,21 @@
+"use client"
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useSession } from "next-auth/react";
+import { fetchProducts } from "@/store/cartSlice";
 
 export default function ThankYouPage() {
+    const { data: session } = useSession();
+  
+    const dispatch = useDispatch<any>();
+    useEffect(() => {
+      const userId = session
+        ? session.user.userId
+        : localStorage.getItem("guestId");
+      dispatch(fetchProducts(userId as string));
+    }, [session, dispatch]);
   return (
     <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
       <CheckCircle className="w-20 h-20 text-green-500 mb-4" />

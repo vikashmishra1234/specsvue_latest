@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import CartCard from "./CartCard";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
@@ -6,52 +6,68 @@ import getUserCart from "@/actions/getUserCart";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Loading from "../components/Loading";
+import { useSelector } from "react-redux";
 
-export default  function ProductsPage() {
-  const {data:session} = useSession()
-  const [currentUserCart,setCurrentCart] = useState<any>()
-  const [change,setChange] = useState<boolean>(false);
-  const [loading,setLoading] = useState(false)
-  useEffect(()=>{
-    const userId = session?session.user.userId:localStorage.getItem("guestId");
-    (async()=>{
-      setLoading(true)
-      const res = await getUserCart(userId as string);
-      setLoading(false)
-      setCurrentCart(res?.data)
-    })()
-  },[session,change])
-  if(loading){
-    return <Loading/>
+export default function ProductsPage() {
+  const { data: session } = useSession();
+  const [change, setChange] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const { products } = useSelector((state: any) => state.cart);
+  const [currentUserCart, setCurrentCart] = useState<any>(products);
+
+  useEffect(() => {
+    setCurrentCart(products);
+  }, [products]);
+
+  // useEffect(() => {
+  //   const userId = session
+  //     ? session.user.userId
+  //     : localStorage.getItem("guestId");
+  //   (async () => {
+  //     setLoading(true);
+  //     const res = await getUserCart(userId as string);
+  //     setLoading(false);
+  //     setCurrentCart(res?.data)
+  //   })();
+  // }, [session, change]);
+  if (loading) {
+    return <Loading />;
   }
-  if(!currentUserCart||currentUserCart?.items.length ===0){
+  if (!currentUserCart || currentUserCart?.items?.length === 0) {
     return (
-    <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
-      <ShoppingCart className="w-16 h-16 text-gray-400 mb-4" />
-      <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
-      <p className="text-gray-600 mb-6">Looks like you haven’t added anything to your cart yet.</p>
-      <Link href="/products">
-        <button className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition">
-          Shop Now
-        </button>
-      </Link>
-    </div>
-  );
+      <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
+        <ShoppingCart className="w-16 h-16 text-gray-400 mb-4" />
+        <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
+        <p className="text-gray-600 mb-6">
+          Looks like you haven’t added anything to your cart yet.
+        </p>
+        <Link href="/products">
+          <button className="bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition">
+            Shop Now
+          </button>
+        </Link>
+      </div>
+    );
   }
 
   return (
-
     <div className="bg-[#fbf9f7] min-h-screen py-10 px-4 md:px-10">
       <div className="max-w-7xl m-auto">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Your Cart</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+          Your Cart
+        </h1>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left - Cart Items */}
           <div className="flex-1 space-y-6">
             {currentUserCart ? (
-              currentUserCart?.items.map((data: any, ind: number) => (
+              currentUserCart?.items?.map((data: any, ind: number) => (
                 <div key={ind}>
-                  <CartCard setChange={setChange} session={session} data={data} />
+                  <CartCard
+                    setChange={setChange}
+                    session={session}
+                    data={data}
+                  />
                 </div>
               ))
             ) : (
@@ -68,7 +84,7 @@ export default  function ProductsPage() {
             </div>
             <div className="flex justify-between font-bold text-lg mb-6">
               <span>Total Price:</span>
-              <span>₹{currentUserCart.cartTotal}</span>
+              <span>₹{currentUserCart?.cartTotal}</span>
             </div>
             <Link
               href={"/proceed-to-payment/address"}
