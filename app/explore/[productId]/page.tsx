@@ -1,17 +1,15 @@
 "use client";
 
-import axios from 'axios';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback, useMemo, memo } from 'react';
-import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
-import { ChevronRight, X } from 'lucide-react';
-import { lenses as LENS_DATA } from "@/LensData.json";
-import Loading from '@/app/components/Loading';
-import LensSelectorModal from '../LensSelectorModal';
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useEffect, useState, useMemo, memo } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import Loading from "@/app/components/Loading";
+import LensSelectorModal from "../LensSelectorModal";
+import { Star, ShoppingCart } from "lucide-react";
 
-// --- TYPE DEFINITIONS ---
+// --- TYPES ---
 interface IProduct {
   _id: string;
   images: string[];
@@ -21,17 +19,12 @@ interface IProduct {
   frameSize: string;
   price: string;
   discount: number;
-  [key: string]: any; // For other dynamic properties
+  brandName?: string;
+  description?: string;
+  [key: string]: any;
 }
 
-interface LensOption {
-  price: number;
-  coating: string;
-  material: string;
-  lensId: string;
-}
-
-
+// --- HOOK ---
 const useProduct = (productId: string | undefined | string[]) => {
   const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,17 +38,11 @@ const useProduct = (productId: string | undefined | string[]) => {
     }
 
     const fetchProduct = async () => {
-      setLoading(true);
       try {
         const res = await axios.get(`/api/get-product?productId=${productId}`);
-        if (res.data?.product) {
-          setProduct(res.data.product);
-        } else {
-          throw new Error("Product not found.");
-        }
-      } catch (err) {
-        console.error("Error fetching product:", err);
-        setError("Failed to load product details. Please try again later.");
+        setProduct(res.data?.product || null);
+      } catch {
+        setError("Failed to load product details.");
       } finally {
         setLoading(false);
       }
@@ -67,61 +54,50 @@ const useProduct = (productId: string | undefined | string[]) => {
   return { product, loading, error };
 };
 
-
-// --- UI COMPONENTS ---
-
-
-
-
-
+// --- COMPONENTS ---
 const ErrorDisplay = ({ message }: { message: string }) => (
   <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 text-center">
     <div>
-      <h2 className="text-2xl font-bold text-gray-800">Oops!</h2>
-      <p className="text-gray-600">{message}</p>
+      <h2 className="text-2xl font-semibold text-gray-800">Oops!</h2>
+      <p className="text-gray-600 mt-2">{message}</p>
     </div>
   </div>
 );
 
-
-
 const ProductImageGallery = memo(({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState(images[0] || "");
 
-  if (!images?.length) return null;
-
   return (
-    <div className="p-4 md:p-8">
-      {/* Main Image */}
-      <div className="relative mb-4 h-96 w-full overflow-hidden rounded-xl bg-gray-100 p-4">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedImage}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="relative h-full w-full"
-          >
-            <Image src={selectedImage} alt="Product" fill className="object-contain" priority />
-          </motion.div>
-        </AnimatePresence>
-      </div>
+    <div className="p-6 md:p-8 bg-gradient-to-b from-gray-50 to-white rounded-2xl">
+      <motion.div
+        key={selectedImage}
+        initial={{ opacity: 0.7, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-white shadow-md"
+      >
+        <Image
+          src={selectedImage}
+          alt="Product"
+          fill
+          className="object-contain p-4"
+          priority
+        />
+      </motion.div>
 
       {/* Thumbnails */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex gap-3 justify-center">
         {images.map((img) => (
-          <div
+          <motion.div
             key={img}
+            whileHover={{ scale: 1.05 }}
             onClick={() => setSelectedImage(img)}
-            className={`cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300 ${
-              selectedImage === img ? 'border-blue-500 shadow-lg' : 'border-transparent hover:border-gray-300'
+            className={`cursor-pointer rounded-xl overflow-hidden border-2 ${
+              selectedImage === img ? "border-blue-500" : "border-gray-200"
             }`}
           >
-            <div className="relative pt-[100%]">
-              <Image src={img} alt="Thumbnail" fill className="object-cover" />
-            </div>
-          </div>
+            <Image src={img} alt="Thumbnail" width={70} height={70} className="object-cover" />
+          </motion.div>
         ))}
       </div>
     </div>
@@ -129,127 +105,153 @@ const ProductImageGallery = memo(({ images }: { images: string[] }) => {
 });
 ProductImageGallery.displayName = "ProductImageGallery";
 
+const ProductInformation = memo(
+  ({
+    product,
+    onBuyNowClick,
+  }: {
+    product: IProduct;
+    onBuyNowClick: (isAddToCart: boolean) => void;
+  }) => {
+    const discountedPrice = (
+      Number(product.price) -
+      (Number(product.price) * product.discount) / 100
+    ).toFixed(0);
 
-const ProductInformation = memo(({ product, onBuyNowClick }: { product: IProduct; onBuyNowClick: (isAddToCart:boolean) => void }) => {
+    return (
+      <div className="flex flex-col justify-between p-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 capitalize">
+            {product.brandName || "SpecsVue Collection"}
+          </h1>
+          <p className="text-gray-500 text-sm mb-6">
+            {product.description || "Premium eyewear designed for comfort and style."}
+          </p>
 
-  return (
-    <div className="flex h-full flex-col justify-center p-6 md:p-8">
-      <h1 className="text-3xl font-extrabold capitalize text-gray-900 md:text-4xl">
-        {`${product.frameColor} ${product.frameType} ${product.frameShape}`}
-      </h1>
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="text-yellow-400 fill-yellow-400" size={20} />
+            <Star className="text-yellow-400 fill-yellow-400" size={20} />
+            <Star className="text-yellow-400 fill-yellow-400" size={20} />
+            <Star className="text-yellow-400 fill-yellow-400" size={20} />
+            <Star className="text-gray-300" size={20} />
+            <span className="text-sm text-gray-500">(4.0)</span>
+          </div>
 
-      <div className="my-6 flex flex-wrap gap-3">
-        <span className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700">
-          Size: {product.frameSize}
-        </span>
-        <span className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800">
-          Frame + Lens
-        </span>
-      </div>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl mb-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-4xl font-bold text-gray-900">₹{discountedPrice}</p>
+                <p className="text-gray-400 line-through text-sm">₹{product.price}</p>
+              </div>
+              <span className="bg-red-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
+                {product.discount}% OFF
+              </span>
+            </div>
+          </div>
 
-      <div className="mb-6 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 p-4">
-        <div className="mb-2 flex items-center gap-3">
-          <span className="animate-pulse rounded-full bg-red-500 px-3 py-1 text-sm font-bold text-white">
-            {product.discount}% OFF
-          </span>
+          <ul className="text-sm text-gray-700 space-y-2 mb-6">
+            <li><b>Frame Type:</b> {product.frameType}</li>
+            <li><b>Frame Shape:</b> {product.frameShape}</li>
+            <li><b>Color:</b> {product.frameColor}</li>
+            <li><b>Size:</b> {product.frameSize}</li>
+          </ul>
         </div>
-        <p className="text-4xl font-extrabold text-black">₹{product.price}</p>
+
+        <div className="flex flex-col gap-3">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onBuyNowClick(false)}
+            className="w-full cursor-pointer rounded-xl bg-gray-900 py-3 text-white font-semibold hover:bg-black transition-all"
+          >
+            Buy Now
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onBuyNowClick(true)}
+            className="w-full cursor-pointer rounded-xl bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+          >
+            <ShoppingCart size={18} /> Add to Cart
+          </motion.button>
+        </div>
       </div>
-
-      <button
-        onClick={()=>onBuyNowClick(false)}
-        className="w-full cursor-pointer transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
-      >
-        Select Lens & Buy Now
-      </button>
-      <button
-        onClick={()=>onBuyNowClick(true)}
-        className="w-full cursor-pointer transform rounded-xl bg-gray-800 py-4 font-bold text-white transition-all hover:scale-105 hover:bg-black focus:outline-none focus:ring-4 focus:ring-gray-300"
-      >
-        Add to cart
-      </button>
-    </div>
-  );
-});
+    );
+  }
+);
 ProductInformation.displayName = "ProductInformation";
-
 
 const ProductDetailsSection = memo(({ product }: { product: IProduct }) => {
   const [showAll, setShowAll] = useState(false);
-
   const details = useMemo(() => {
-    const excludedKeys = new Set(["_id", "images", "createdAt", "updatedAt", "__v", "price", "discount"]);
-    return Object.entries(product).filter(([key]) => !excludedKeys.has(key));
+    const excluded = ["_id", "images", "createdAt", "updatedAt", "__v", "price", "discount"];
+    return Object.entries(product).filter(([key]) => !excluded.includes(key));
   }, [product]);
 
-  const visibleDetails = showAll ? details : details.slice(0, 6);
-
   return (
-    <div className="mt-12 rounded-2xl bg-white p-6 shadow-sm">
-      <h3 className="mb-6 border-b pb-2 text-2xl font-bold text-gray-800">Product Details</h3>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {visibleDetails.map(([key, value]) => (
-          <div key={key} className="transform rounded-lg border bg-gray-50 p-4 transition-shadow duration-200 hover:shadow-md">
-            <p className="mb-1 text-sm font-medium capitalize text-gray-500">
-              {key.replace(/([A-Z])/g, ' $1')}
-            </p>
-            <p className="break-words font-semibold capitalize text-gray-800">
-              {String(value)}
-            </p>
+    <section className="mt-10 bg-white shadow rounded-2xl p-6">
+      <h3 className="text-2xl font-semibold border-b pb-3 mb-4">Product Details</h3>
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {(showAll ? details : details.slice(0, 6)).map(([key, value]) => (
+          <div key={key} className="border rounded-xl p-3 hover:shadow-sm transition">
+            <p className="text-xs text-gray-500 uppercase">{key}</p>
+            <p className="text-gray-800 font-semibold capitalize">{String(value)}</p>
           </div>
         ))}
       </div>
       {details.length > 6 && (
-        <div className="mt-6 text-center">
-          <button onClick={() => setShowAll(!showAll)} className="font-medium text-blue-600 hover:underline">
-            {showAll ? 'Show Less' : 'Show More Details'}
+        <div className="text-center mt-4">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-blue-600 text-sm font-medium hover:underline"
+          >
+            {showAll ? "Show Less" : "Show More Details"}
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 });
 ProductDetailsSection.displayName = "ProductDetailsSection";
-
-
-
-
 
 export default function ExploreProductPage() {
   const params = useParams();
   const { product, loading, error } = useProduct(params?.productId);
   const [isLensSelectorOpen, setLensSelectorOpen] = useState(false);
-  const [addToCart,setAddToCart] = useState<boolean>(true)
+  const [addToCart, setAddToCart] = useState(true);
 
   if (loading) return <Loading />;
-  if (error || !product) return <ErrorDisplay message={error || "Product not found."} />;
+  if (error || !product) return <ErrorDisplay message={error || "Product not found"} />;
 
   return (
     <>
-      <main className="min-h-screen bg-gray-50">
-        {/* You can re-add your InnerBanner here if needed */}
-        {/* <InnerBanner ... /> */}
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
-            <div className="grid grid-cols-1 lg:grid-cols-5">
-              <div className="lg:col-span-3">
-                <ProductImageGallery images={product.images} />
-              </div>
-              <div className="border-t border-gray-200 lg:col-span-2 lg:border-l lg:border-t-0">
-                <ProductInformation product={product} onBuyNowClick={(isAddToCart:boolean) => {
-                  setAddToCart(isAddToCart);
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-5 gap-6 bg-white rounded-3xl shadow-md overflow-hidden">
+            <div className="lg:col-span-3">
+              <ProductImageGallery images={product.images} />
+            </div>
+            <div className="lg:col-span-2 border-t lg:border-t-0 lg:border-l">
+              <ProductInformation
+                product={product}
+                onBuyNowClick={(isAdd) => {
+                  setAddToCart(isAdd);
                   setLensSelectorOpen(true);
-                }} />
-              </div>
+                }}
+              />
             </div>
           </div>
+
           <ProductDetailsSection product={product} />
         </div>
       </main>
 
       <AnimatePresence>
         {isLensSelectorOpen && (
-          <LensSelectorModal addToCart={addToCart} product={product} onClose={() => setLensSelectorOpen(false)} />
+          <LensSelectorModal
+            addToCart={addToCart}
+            product={product}
+            onClose={() => setLensSelectorOpen(false)}
+          />
         )}
       </AnimatePresence>
     </>

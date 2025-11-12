@@ -96,6 +96,7 @@ export async function PUT(req: NextRequest) {
       const frameId = order.frameDetails?._id || order.productId;
       if (frameId) {
         const product = await Product.findById(frameId);
+        console.log(product)
         if (product) {
           const currentStock = Number(product.stock) || 0;
           const cancelQty = Number(order.quantity) || 1;
