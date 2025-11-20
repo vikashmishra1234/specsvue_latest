@@ -49,6 +49,7 @@ const handleLogout = async () => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       await signOut({ callbackUrl: "/login" });
+      localStorage.removeItem("guestId")
       Swal.fire("Logged Out!", "You have been successfully logged out.", "success");
     }
   });

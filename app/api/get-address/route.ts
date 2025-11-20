@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(request:Request){
     try {
-        console.log("called")
         await connectToDatabase()
         const url = new URL(request.url)
         const userId = url.searchParams.get('userId');

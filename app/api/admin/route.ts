@@ -73,8 +73,7 @@ export async function POST(req: Request) {
       fs.unlinkSync(file.filepath)
     }
     normalizedFields.images = uploadedImageUrls
-    console.log("uploaded images",uploadedImageUrls)
-    console.log("normalized images",normalizedFields)
+  
       const newProduct = new Product(normalizedFields)
       
       await newProduct.save()
