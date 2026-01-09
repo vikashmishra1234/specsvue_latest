@@ -2,6 +2,9 @@
 import { connectToDatabase } from "@/lib/dbConnect";
 import Cart from "@/models/Cart";
 import Product from "@/models/Product";
+import ContactLens from "@/models/ContactLens";
+import mongoose from "mongoose";
+
 export default async function getUserCart(userId: string) {
   if (!userId) {
     return {
@@ -12,8 +15,12 @@ export default async function getUserCart(userId: string) {
 
   try {
     await connectToDatabase();
-    const products = await Product.find({});
-    const currentUserCart = await Cart.findOne({ userId }).populate("items.productId");
+    // Force schemas to register if not already
+    await Product.init();
+    await ContactLens.init();
+    
+    // We don't populate here because we need to handle mixed types
+    let currentUserCart = await Cart.findOne({ userId }).lean();
 
     if (!currentUserCart) {
       return {
@@ -22,6 +29,20 @@ export default async function getUserCart(userId: string) {
         data: null,
       };
     }
+
+    // Manually populate items
+    const populatedItems = await Promise.all(currentUserCart.items.map(async (item: any) => {
+        if (item.productType === 'ContactLens') {
+            const lensDetails = await ContactLens.findById(item.productId).lean();
+            return { ...item, productId: lensDetails || item.productId }; // Replace ID with object
+        } else {
+             // Default to Frame/Product
+             const productDetails = await Product.findById(item.productId).lean();
+             return { ...item, productId: productDetails || item.productId, productType: 'Frame' };
+        }
+    }));
+
+    currentUserCart.items = populatedItems;
 
     return {
       success: true,

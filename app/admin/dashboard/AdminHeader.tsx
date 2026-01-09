@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Cookies from 'js-cookie'
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileSliders } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, FileSliders, Eye } from 'lucide-react';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ const AdminHeader = ({ setShowThis }: HeaderProps) => {
     { id: 0, label: 'Dashboard', icon: LayoutDashboard },
     { id: 1, label: 'Orders', icon: ShoppingCart },
     { id: 2, label: 'Products', icon: Package },
+    { id: 5, label: 'Contact Lenses', icon: Eye },
     { id: 3, label: 'Priscriptions', icon: FileSliders },
     { id: 4, label: 'Settings', icon: Settings },
   ];

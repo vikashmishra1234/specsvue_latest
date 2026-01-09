@@ -9,6 +9,7 @@ import Orders from './Orders';
 import AdminHeader from './AdminHeader';
 import Priscription from './Prescription';
 import AdminSettings from './Settings';
+import ContactLensList from '../contact-lenses/page';
 
 export default function AdminDashboard() {
   const [showThis, setShowThis] = useState(0);
@@ -79,6 +80,7 @@ localStorage.setItem(
          {showThis===1&&<Orders orders={orders} />}
        </div>
         {showThis === 2 && <Product setChange={setChange} products={products} change={change} />}
+        {showThis === 5 && <ContactLensList />}
         {showThis === 3 && <Priscription  />}
         {showThis === 4 && <AdminSettings  />}
       </div>

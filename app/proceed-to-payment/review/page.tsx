@@ -1,3 +1,4 @@
+
 // app/proceed-to-payment/review/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -8,6 +9,7 @@ import Link from "next/link";
 import { PayNowButton } from "../PayNowButton";
 import { CheckCircle, MapPin, Phone, Package, CreditCard } from "lucide-react";
 import Product from "@/models/Product";
+import ContactLens from "@/models/ContactLens";
 
 export default async function Review({
   searchParams,
@@ -34,20 +36,34 @@ export default async function Review({
 
   const userId = session.user.userId;
   await connectToDatabase();
+  // Ensure models are registered
+  await Product.init();
+  await ContactLens.init();
 
   let addressData = null;
   if (searchParams.addressId) {
-    const Invokeporduct = Product;
-    await Product.find({})
     const userAddressDoc = await Address.findOne({ userId });
     addressData = userAddressDoc?.addresses?.find(
       (addr: any) => addr._id.toString() === searchParams.addressId
     );
   }
 
-  let cartData = null;
+  let cartData: any = null;
   if (searchParams.cartId) {
-    cartData = await Cart.findOne({ userId }).populate("items.productId");
+    // Manual population due to mixed product types
+    const cartRaw = await Cart.findOne({ userId }).lean();
+    if(cartRaw) {
+        cartData = cartRaw;
+        cartData.items = await Promise.all(cartRaw.items.map(async (item: any) => {
+            let populatedProduct: any = null;
+            if (item.productType === 'ContactLens') {
+                populatedProduct = await ContactLens.findById(item.productId).lean();
+            } else {
+                populatedProduct = await Product.findById(item.productId).lean();
+            }
+            return { ...item, productId: populatedProduct || item.productId };
+        }));
+    }
   }
 
   return (
@@ -172,52 +188,98 @@ export default async function Review({
                     <div className="flex flex-col sm:flex-row gap-4">
                       <div className="flex-shrink-0">
                         <img
-                          src={data.productId.images[0]}
-                          alt={`${data.productId.brandName} ${data.productId.frameType}`}
+                          src={data?.productId?.images?.[0] || '/no-image.png'}
+                          alt={data.productId ? (data.productId.brandName || data.productId.name) : "Product"}
                           className="w-24 h-24 object-cover rounded-md border"
                         />
                       </div>
                       <div className="flex-grow">
-                        <h3 className="font-medium text-gray-900">
-                          {data.productId.brandName} {data.productId.frameType}
-                        </h3>
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-2 text-sm">
-                          <p className="text-gray-600">
-                            <span className="font-medium">Frame Shape:</span>{" "}
-                            {data.productId.frameShape}
-                          </p>
-                          <p className="text-gray-600">
-                            <span className="font-medium">Collection:</span>{" "}
-                            {data.productId.collection}
-                          </p>
-                          <p className="text-gray-600">
-                            <span className="font-medium">Temple Color:</span>{" "}
-                            {data.productId.templeColor}
-                          </p>
-                          <p className="text-gray-600">
-                            <span className="font-medium">Product Type:</span>{" "}
-                            {data.productId.productType}
-                          </p>
-                        </div>
-                        <div className="mt-3 py-2 px-3 bg-blue-50 rounded-md">
-                          <p className="text-blue-800 text-sm font-medium">
-                            Lens Details
-                          </p>
-                          <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-1 text-sm">
-                            <p className="text-gray-700">
-                              <span className="font-medium">Lens:</span>{" "}
-                              {data.lensName}
-                            </p>
-                            <p className="text-gray-700">
-                              <span className="font-medium">Coating:</span>{" "}
-                              {data.lensCoating}
-                            </p>
-                            <p className="text-gray-700">
-                              <span className="font-medium">Material:</span>{" "}
-                              {data.lensMaterial}
-                            </p>
-                          </div>
-                        </div>
+                        {data.productType === 'ContactLens' ? (
+                            <>
+                                <h3 className="font-medium text-gray-900">
+                                  {data.productId?.name}
+                                </h3>
+                                 <p className="text-sm text-gray-600">{data.productId?.brandName} - {data.productId?.lensType}</p>
+                                <div className="mt-3 py-2 px-3 bg-blue-50 rounded-md">
+                                  <p className="text-blue-800 text-sm font-medium">
+                                    Prescription Details
+                                  </p>
+                                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-1 text-sm">
+                                    <p className="text-gray-700">
+                                      <span className="font-medium">Power:</span> {data.power}
+                                    </p>
+                                    {data.cylinder && (
+                                        <p className="text-gray-700">
+                                          <span className="font-medium">Cyl:</span> {data.cylinder}
+                                        </p>
+                                    )}
+                                    {data.axis && (
+                                        <p className="text-gray-700">
+                                          <span className="font-medium">Axis:</span> {data.axis}
+                                        </p>
+                                    )}
+                                    {data.baseCurve && (
+                                        <p className="text-gray-700">
+                                          <span className="font-medium">BC:</span> {data.baseCurve}
+                                        </p>
+                                    )}
+                                     {data.diameter && (
+                                        <p className="text-gray-700">
+                                          <span className="font-medium">Dia:</span> {data.diameter}
+                                        </p>
+                                    )}
+                                     {data.color && (
+                                        <p className="text-gray-700">
+                                          <span className="font-medium">Color:</span> {data.color}
+                                        </p>
+                                    )}
+                                  </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h3 className="font-medium text-gray-900">
+                                  {data.productId?.brandName} {data.productId?.frameType}
+                                </h3>
+                                <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-2 text-sm">
+                                  <p className="text-gray-600">
+                                    <span className="font-medium">Frame Shape:</span>{" "}
+                                    {data.productId?.frameShape}
+                                  </p>
+                                  <p className="text-gray-600">
+                                    <span className="font-medium">Collection:</span>{" "}
+                                    {data.productId?.collection}
+                                  </p>
+                                  <p className="text-gray-600">
+                                    <span className="font-medium">Temple Color:</span>{" "}
+                                    {data.productId?.templeColor}
+                                  </p>
+                                  <p className="text-gray-600">
+                                    <span className="font-medium">Product Type:</span>{" "}
+                                    {data.productId?.productType}
+                                  </p>
+                                </div>
+                                <div className="mt-3 py-2 px-3 bg-blue-50 rounded-md">
+                                  <p className="text-blue-800 text-sm font-medium">
+                                    Lens Details
+                                  </p>
+                                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-1 text-sm">
+                                    <p className="text-gray-700">
+                                      <span className="font-medium">Lens:</span>{" "}
+                                      {data.lensName}
+                                    </p>
+                                    <p className="text-gray-700">
+                                      <span className="font-medium">Coating:</span>{" "}
+                                      {data.lensCoating}
+                                    </p>
+                                    <p className="text-gray-700">
+                                      <span className="font-medium">Material:</span>{" "}
+                                      {data.lensMaterial}
+                                    </p>
+                                  </div>
+                                </div>
+                            </>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import getUserCart from "@/actions/getUserCart";
 import { useEffect, useState } from "react";
+import ContactLensCartCard from "./ContactLensCartCard";
 import { useSession } from "next-auth/react";
 import Loading from "../components/Loading";
 import { useSelector } from "react-redux";
@@ -12,24 +13,28 @@ export default function ProductsPage() {
   const { data: session } = useSession();
   const [change, setChange] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const { products } = useSelector((state: any) => state.cart);
-  const [currentUserCart, setCurrentCart] = useState<any>(products);
+  /* const { products } = useSelector((state: any) => state.cart); */
+  const [currentUserCart, setCurrentCart] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'frames' | 'lenses'>('frames');
 
+  // Fetch cart on load
   useEffect(() => {
-    setCurrentCart(products);
-  }, [products]);
+    const userId = session?.user?.userId || localStorage.getItem("guestId");
+    if(userId){
+        (async () => {
+        setLoading(true);
+        const res = await getUserCart(userId as string);
+        setLoading(false);
+        if(res?.success) setCurrentCart(res.data);
+        })();
+    }
+  }, [session, change]);
 
-  // useEffect(() => {
-  //   const userId = session
-  //     ? session.user.userId
-  //     : localStorage.getItem("guestId");
-  //   (async () => {
-  //     setLoading(true);
-  //     const res = await getUserCart(userId as string);
-  //     setLoading(false);
-  //     setCurrentCart(res?.data)
-  //   })();
-  // }, [session, change]);
+/*
+  useEffect(() => {
+     setCurrentCart(products);
+   }, [products]);
+*/
   if (loading) {
     return <Loading />;
   }
@@ -60,16 +65,51 @@ export default function ProductsPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left - Cart Items */}
           <div className="flex-1 space-y-6">
-            {currentUserCart ? (
-              currentUserCart?.items?.map((data: any, ind: number) => (
-                <div key={ind}>
-                  <CartCard
-                    setChange={setChange}
-                    session={session}
-                    data={data}
-                  />
-                </div>
-              ))
+            
+            {/* Tabs */}
+            <div className="flex border-b mb-4">
+                <button 
+                    onClick={() => setActiveTab('frames')}
+                    className={`px-4 py-2 font-medium ${activeTab === 'frames' ? 'border-b-2 border-black text-black' : 'text-gray-500'}`}
+                >
+                    Frames
+                </button>
+                <button 
+                    onClick={() => setActiveTab('lenses')}
+                    className={`px-4 py-2 font-medium ${activeTab === 'lenses' ? 'border-b-2 border-black text-black' : 'text-gray-500'}`}
+                >
+                    Contact Lenses
+                </button>
+            </div>
+
+            {currentUserCart?.items ? (
+              (() => {
+                  const items = currentUserCart.items.filter((item: any) => 
+                      activeTab === 'frames' 
+                      ? (item.productType === 'Frame' || !item.productType) 
+                      : item.productType === 'ContactLens'
+                  );
+
+                  if (items.length === 0) return <p className="text-gray-500 py-4">No items in this category.</p>;
+
+                  return items.map((data: any, ind: number) => (
+                    <div key={ind}>
+                      {activeTab === 'frames' ? (
+                          <CartCard
+                            setChange={setChange}
+                            session={session}
+                            data={data}
+                          />
+                      ) : (
+                          <ContactLensCartCard 
+                            setChange={setChange}
+                            session={session}
+                            data={data}
+                          />
+                      )}
+                    </div>
+                  ));
+              })()
             ) : (
               <h3>your cart is empty</h3>
             )}

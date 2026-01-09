@@ -23,7 +23,22 @@ export interface IOrder extends Document {
   transactionId?: string;
   userId: string;
   productId: string;
+  productType?: 'Frame' | 'ContactLens';
   frameDetails?: OrderedFrameDetails;
+  
+  // Contact Lens Details
+  contactLensDetails?: {
+    name?: string;
+    brandName?: string;
+    lensType?: string;
+    power?: number;
+    cylinder?: number;
+    axis?: number;
+    baseCurve?: number;
+    diameter?: number;
+    color?: string;
+    images?: string[];
+  };
   lensName?: string;
   lensCoating?: string;
   lensMaterial?: string;
@@ -55,8 +70,9 @@ const OrderSchema = new Schema<IOrder>(
     transactionId: { type: String, index: true },
 
     userId: { type: String },
-
+    
     productId: {type:String, required: true },
+    productType: { type: String, enum: ['Frame', 'ContactLens'], default: 'Frame' },
 
     frameDetails: {
       brandName: String,
@@ -72,6 +88,20 @@ const OrderSchema = new Schema<IOrder>(
       gender: String,
       price: Schema.Types.Mixed,
       discount: Schema.Types.Mixed,
+      images: [String],
+    },
+
+    // Contact Lens
+    contactLensDetails: {
+      name: String,
+      brandName: String,
+      lensType: String,
+      power: Number,
+      cylinder: Number,
+      axis: Number,
+      baseCurve: Number,
+      diameter: Number,
+      color: String,
       images: [String],
     },
 

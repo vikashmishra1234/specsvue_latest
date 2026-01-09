@@ -15,7 +15,8 @@ export default function ShowOrders({ isAdmin, order, isCancell }: ShowOrdersProp
   const [orderData, setOrderData] = useState(order);
   const [loading, setLoading] = useState(false);
 
-  const frame = orderData.frameDetails;
+  /* const frame = orderData.frameDetails; */
+  const { frameDetails: frame, contactLensDetails: lens, productType } = orderData;
   const status = orderData.orderStatus;
   const isPaid = orderData.paymentStatus === "paid";
 
@@ -108,12 +109,13 @@ export default function ShowOrders({ isAdmin, order, isCancell }: ShowOrdersProp
         </div>
       </div>
 
-      {/* Frame Details */}
+      {/* Product Details - Polymorphic */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="sm:w-50 w-full  flex justify-center">
+        <div className="sm:w-50 w-full flex justify-center">
+            {/* Image Handling */}
           <Image
-            src={frame?.images?.[0] || "/no-image.png"}
-            alt={frame?.brandName || "Frame Image"}
+            src={productType === 'ContactLens' ? (lens?.images?.[0] || "/no-image.png") : (frame?.images?.[0] || "/no-image.png")}
+            alt={productType === 'ContactLens' ? (lens?.name || "Lens") : (frame?.brandName || "Frame")}
             width={140}
             height={140}
             className="rounded-lg w-full object-cover border"
@@ -121,51 +123,57 @@ export default function ShowOrders({ isAdmin, order, isCancell }: ShowOrdersProp
         </div>
 
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-800 text-lg mb-1">
-            {frame?.brandName} – {frame?.modelNumber}
-          </h3>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">Frame Type:</span> {frame?.frameType}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">Frame Shape:</span> {frame?.frameShape}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">Material:</span>{" "}
-            {frame?.frameMaterial}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">Color:</span> {frame?.frameColor}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">Prescription:</span>{" "}
-            {frame?.prescriptionType}
-          </p>
-
-          {/* Lens */}
-          <div className="mt-2 text-sm text-gray-700">
-            {orderData.lensName && (
-              <p>
-                <span className="font-medium">Lens:</span> {orderData.lensName}
-              </p>
-            )}
-            {orderData.lensMaterial && (
-              <p>
-                <span className="font-medium">Material:</span>{" "}
-                {orderData.lensMaterial}
-              </p>
-            )}
-            {orderData.lensCoating && (
-              <p>
-                <span className="font-medium">Coating:</span>{" "}
-                {orderData.lensCoating}
-              </p>
-            )}
-            <p>
-              <span className="font-medium">Quantity:</span>{" "}
-              {orderData.quantity}
-            </p>
-          </div>
+          {productType === 'ContactLens' ? (
+             <>
+                <h3 className="font-semibold text-gray-800 text-lg mb-1">
+                    {lens?.name}
+                </h3>
+                <p className="text-sm text-gray-700">
+                    <span className="font-medium">Type:</span> {lens?.lensType}
+                </p>
+                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm text-gray-700">
+                     <p><span className="font-medium">Power:</span> {lens?.power}</p>
+                     {lens?.cylinder && <p><span className="font-medium">Cyl:</span> {lens?.cylinder}</p>}
+                     {lens?.axis && <p><span className="font-medium">Axis:</span> {lens?.axis}</p>}
+                     {lens?.baseCurve && <p><span className="font-medium">BC:</span> {lens?.baseCurve}</p>}
+                     {lens?.diameter && <p><span className="font-medium">Dia:</span> {lens?.diameter}</p>}
+                     {lens?.color && <p><span className="font-medium">Color:</span> {lens?.color}</p>}
+                </div>
+                 <p className="mt-2 text-sm text-gray-700">
+                    <span className="font-medium">Quantity:</span> {orderData.quantity}
+                 </p>
+             </>
+          ) : (
+             <>
+                <h3 className="font-semibold text-gray-800 text-lg mb-1">
+                    {frame?.brandName} – {frame?.modelNumber}
+                </h3>
+                <p className="text-sm text-gray-700">
+                    <span className="font-medium">Frame Type:</span> {frame?.frameType}
+                </p>
+                <p className="text-sm text-gray-700">
+                    <span className="font-medium">Frame Shape:</span> {frame?.frameShape}
+                </p>
+                <p className="text-sm text-gray-700">
+                    <span className="font-medium">Material:</span>{" "}
+                    {frame?.frameMaterial}
+                </p>
+                <p className="text-sm text-gray-700">
+                    <span className="font-medium">Color:</span> {frame?.frameColor}
+                </p>
+                {/* Lens Details for Frame */}
+                {orderData.lensName && (
+                  <div className="mt-2 text-sm text-gray-700">
+                    <p><span className="font-medium">Lens:</span> {orderData.lensName}</p>
+                    {orderData.lensMaterial && <p><span className="font-medium">Material:</span> {orderData.lensMaterial}</p>}
+                    {orderData.lensCoating && <p><span className="font-medium">Coating:</span> {orderData.lensCoating}</p>}
+                  </div>
+                )}
+                 <p className="mt-2 text-sm text-gray-700">
+                    <span className="font-medium">Quantity:</span> {orderData.quantity}
+                 </p>
+             </>
+          )}
         </div>
       </div>
 
