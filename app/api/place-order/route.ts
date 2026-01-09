@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const orders = await Promise.all(
       userCart.items.map(async (item: any) => {
         let product: any = null;
-        let productType = item.productType || 'Frame';
+        const productType = item.productType || 'Frame';
 
         if (productType === 'ContactLens') {
              product = await ContactLens.findById(item.productId);
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         const price = Number(item.price); // Use price from cart item to respect purchase time price
         const subtotal = price * quantity;
         
-        let orderData: any = {
+        const orderData: any = {
           orderId: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           transactionId,
           userId,

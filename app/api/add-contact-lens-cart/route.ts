@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     const priceAsNumber = typeof price === "string" ? parseFloat(price) : price;
 
-    let newItem = {
+    const newItem = {
       productType: 'ContactLens',
       productId: productId,
       cartProductId,

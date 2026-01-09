@@ -200,7 +200,7 @@ export default function AddContactLensPage() {
             <input type="file" multiple accept="image/*" onChange={(e) => handleImageChange(e, false)} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
             <div className="flex gap-2 mt-2 overflow-x-auto">
                 {previewUrls.map((url, i) => (
-                    <img key={i} src={url} className="h-20 w-20 object-cover rounded border" />
+                    <img key={i} src={url} alt={`preview-${i}`} className="h-20 w-20 object-cover rounded border" />
                 ))}
             </div>
         </div>
