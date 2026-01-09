@@ -20,7 +20,7 @@
     "jspdf": "^3.0.3",
     "lucide-react": "^0.482.0",
     "mongoose": "^8.12.1",
-    "next": "15.2.1",
+    "next": "15.2.8",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "pdf-lib": "^1.17.1",
