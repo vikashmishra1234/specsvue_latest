@@ -5,9 +5,10 @@ interface OverviewProps {
   productsLength: number;
   users: number;
   orders: any[];
+  totalOrders: number;
 }
 
-export default function Overview({ users, productsLength, orders }: OverviewProps) {
+export default function Overview({ users, productsLength, orders, totalOrders }: OverviewProps) {
   // Optional: dynamic greeting
   const hours = new Date().getHours();
   const greeting =
@@ -37,7 +38,7 @@ export default function Overview({ users, productsLength, orders }: OverviewProp
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14">
           <StatCard
             title="Total Orders"
-            value={orders.length}
+            value={totalOrders}
             icon="📦"
             color="bg-blue-50"
           />

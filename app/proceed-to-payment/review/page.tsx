@@ -1,7 +1,7 @@
 
 // app/proceed-to-payment/review/page.tsx
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import Address from "@/models/Address";
 import { connectToDatabase } from "@/lib/dbConnect";
 import Cart from "@/models/Cart";
@@ -14,8 +14,9 @@ import ContactLens from "@/models/ContactLens";
 export default async function Review({
   searchParams,
 }: {
-  searchParams: { addressId?: string; cartId: string };
+  searchParams: Promise<{ addressId?: string; cartId: string }>;
 }) {
+  const { addressId, cartId } = await searchParams;
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.userId) {
@@ -41,17 +42,17 @@ export default async function Review({
   await ContactLens.init();
 
   let addressData = null;
-  if (searchParams.addressId) {
+  if (addressId) {
     const userAddressDoc = await Address.findOne({ userId });
     addressData = userAddressDoc?.addresses?.find(
-      (addr: any) => addr._id.toString() === searchParams.addressId
+      (addr: any) => addr._id.toString() === addressId
     );
   }
 
   let cartData: any = null;
-  if (searchParams.cartId) {
+  if (cartId) {
     // Manual population due to mixed product types
-    const cartRaw = await Cart.findOne({ userId }).lean();
+    const cartRaw: any = await Cart.findOne({ userId }).lean();
     if(cartRaw) {
         cartData = cartRaw;
         cartData.items = await Promise.all(cartRaw.items.map(async (item: any) => {
@@ -108,8 +109,8 @@ export default async function Review({
                 <div className="mt-6">
                   <PayNowButton
                     userId={userId}
-                    cartId={searchParams.cartId}
-                    addressId={searchParams.addressId!}
+                    cartId={cartId}
+                    addressId={addressId!}
                     cartTotal={cartData.cartTotal}
                   />
                 </div>
@@ -327,8 +328,8 @@ export default async function Review({
                 <div className="mt-6">
                   <PayNowButton
                     userId={userId}
-                    cartId={searchParams.cartId}
-                    addressId={searchParams.addressId!}
+                    cartId={cartId}
+                    addressId={addressId!}
                     cartTotal={cartData.cartTotal}
                   />
                 </div>

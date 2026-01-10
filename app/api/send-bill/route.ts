@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import mongoose from "mongoose";
 import Order from "@/models/Order";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
+import { connectToDatabase } from "@/lib/dbConnect";
+
 // connect to MongoDB
-if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.MONGO_URI as string);
-}
+// Connection handled inside handler
 
 async function generatePDFBill(user: any, orders: any[], transactionId: string, orderIds: string[]) {
   const pdfDoc = await PDFDocument.create();
@@ -149,6 +149,7 @@ async function generatePDFBill(user: any, orders: any[], transactionId: string, 
 
 export async function POST(req: Request) {
   try {
+    await connectToDatabase();
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

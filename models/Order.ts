@@ -59,6 +59,18 @@ export interface IOrder extends Document {
     estimatedDeliveryDate?: Date;
     deliveredAt?: Date;
   };
+      address: {
+        name: string;
+        houseNumberOrBuildingName: string;
+        areaOrLocality: string;
+        landmark: string,
+        city: string,
+        state: string,
+        pincode: string,
+        phone: string,
+        alternatePhone: string,
+        addressType: string
+    };
   statusHistory?: { status: string; updatedAt: Date; comment?: string }[];
   createdAt: Date;
   updatedAt: Date;
@@ -142,6 +154,19 @@ const OrderSchema = new Schema<IOrder>(
       estimatedDeliveryDate: Date,
       deliveredAt: Date,
     },
+    
+    address: {
+        name: String,
+        houseNumberOrBuildingName: String,
+        areaOrLocality: String,
+        landmark: String,
+        city: String,
+        state: String,
+        pincode: String,
+        phone: String,
+        alternatePhone: String,
+        addressType: String
+    },
 
     statusHistory: [
       {
@@ -153,5 +178,9 @@ const OrderSchema = new Schema<IOrder>(
   },
   { timestamps: true }
 );
+
+if (mongoose.models.Order) {
+    delete mongoose.models.Order;
+}
 
 export default mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchema);

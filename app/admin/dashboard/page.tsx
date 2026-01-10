@@ -14,6 +14,7 @@ import ContactLensList from '../contact-lenses/page';
 export default function AdminDashboard() {
   const [showThis, setShowThis] = useState(0);
   const [orders, setOrders] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,15 +32,18 @@ localStorage.setItem(
     (async () => {
       try {
         setLoading(true);
-        const [ordersData, productsData, usersData] = await Promise.all([
-          getAllOrders(),
+        const [ordersRes, productsData, usersData] = await Promise.all([
+          getAllOrders({ limit: 5 }), // Fetch first 5 for overview/initial
           getAllProducts(),
           getAllUsers()
         ]);
 
         
         setUsers(usersData?.data || []);
-        setOrders(ordersData?.data || []);
+        // ordersRes is now the object { success, data, pagination }
+        setOrders(ordersRes?.data || []);
+        setTotalOrders(ordersRes?.pagination?.totalOrders || 0);
+
         setProducts(productsData?.data || []);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -74,10 +78,11 @@ localStorage.setItem(
             users={users?.length || 0} 
             productsLength={products?.length || 0} 
             orders={orders} 
+            totalOrders={totalOrders}
           />
         )}
        <div className='px-5'>
-         {showThis===1&&<Orders orders={orders} />}
+         {showThis===1&&<Orders initialOrders={orders} />}
        </div>
         {showThis === 2 && <Product setChange={setChange} products={products} change={change} />}
         {showThis === 5 && <ContactLensList />}

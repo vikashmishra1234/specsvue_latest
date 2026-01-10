@@ -39,13 +39,6 @@ const CartSchema = new Schema(
 
 export type ICart = InferSchemaType<typeof CartSchema>;
 
-// Prevent duplicate model compilation error in dev
-// delete models.Cart // Uncomment if needed during dev to force schema refresh, or use the pattern below carefully
-// ideally:
-if (mongoose.models.Cart) {
-    delete mongoose.models.Cart;
-}
-
-const Cart = model<ICart>("Cart", CartSchema);
+const Cart = models.Cart || model<ICart>("Cart", CartSchema);
 
 export default Cart;

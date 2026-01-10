@@ -25,10 +25,17 @@ export async function POST(req: Request) {
     // console.log(admin)
     // await admin.save()
 
-    const admin = await Admin.findOne({ adminId });
+    let admin = await Admin.findOne({ adminId });
 
     if (!admin) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      // Check if this is a first-time login with default credentials
+      const anyAdmin = await Admin.findOne({});
+      if (!anyAdmin && adminId === 'specsvue@123' && password === 'specsvue@123') {
+           const hashPassword = await bcrypt.hash(password, 10);
+           admin = await Admin.create({ adminId, password: hashPassword });
+      } else {
+           return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
     }
 
     const match = bcrypt.compareSync(password,admin.password)

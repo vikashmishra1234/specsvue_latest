@@ -3,16 +3,21 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import AddContactLensForm from "./AddContactLensForm";
 
 export default function ContactLensList() {
   const [lenses, setLenses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'list' | 'add'>('list');
 
   useEffect(() => {
-    fetchLenses();
-  }, []);
+    if (view === 'list') {
+        fetchLenses();
+    }
+  }, [view]);
 
   const fetchLenses = async () => {
+    setLoading(true);
     try {
       const res = await axios.get("/api/get-contact-lenses?limit=100");
       if (res.data.success) {
@@ -25,17 +30,24 @@ export default function ContactLensList() {
     }
   };
 
+  if (view === 'add') {
+      return <AddContactLensForm onBack={() => setView('list')} />;
+  }
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Contact Lenses</h1>
-        <Link href="/admin/contact-lenses/add" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        <button 
+            onClick={() => setView('add')}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
           + Add New
-        </Link>
+        </button>
       </div>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="flex justify-center py-20">Loading...</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">

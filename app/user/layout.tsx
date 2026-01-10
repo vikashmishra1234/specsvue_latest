@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { fetchUser } from '@/actions/ServerSideFetching';
 import UserDashboard from "./UserDashboard"; // Import the new client component
 
@@ -22,7 +22,8 @@ export default async function UserLayout({
   }
   
   const userId = session.user.userId;
-  const currentUser = await fetchUser(userId);
+  const userEmail = session.user.email as string;
+  const currentUser = await fetchUser(userId, userEmail);
 
   if (!currentUser) {
     return (

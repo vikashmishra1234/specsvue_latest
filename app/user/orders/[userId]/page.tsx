@@ -1,21 +1,25 @@
 "use client"
 
 // import CancelItemButton from "./CancelItemButton";
+import { useParams } from "next/navigation";
 import ShowOrders from "@/app/components/ShowOrders";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default  function OrdersPage({ params }: { params: { userId: string } }) {
+export default function OrdersPage() {
+  const params = useParams();
+  const userId = params?.userId as string;
   
   const [orders,setOrders] = useState([])
   useEffect(()=>{
-    (async()=>{
-      const userId = params?.userId as string;
-      const res:any = await axios.get(`/api/get-all-orders?userId=${userId}`)
-      console.log(res)
-      setOrders(res?.data)
-    })()
-  },[params?.userId])
+    if(userId) {
+        (async()=>{
+        const res:any = await axios.get(`/api/get-all-orders?userId=${userId}`)
+        console.log(res)
+        setOrders(res?.data)
+        })()
+    }
+  },[userId])
   if (!orders || orders.length === 0) {
     return (
       <div className="p-8 text-center text-gray-600 text-lg">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/dbConnect";
 import Cart from "@/models/Cart";
 import Address from "@/models/Address";
@@ -25,11 +25,20 @@ export async function POST(req: NextRequest) {
     await ContactLens.init();
 
     // Fetch cart without populate, populate manually
-    const userCart = await Cart.findOne({ userId }).lean();
+    console.log(`[PlaceOrder] Fetching cart for userId: ${userId}`);
+    const userCart: any = await Cart.findOne({ userId }).lean();
     
-    if (!userCart || userCart.items.length === 0) {
-      return NextResponse.json({ message: "Cart not found or empty" }, { status: 404 });
+    if (!userCart) {
+        console.log(`[PlaceOrder] Cart NOT found for userId: ${userId}`);
+        return NextResponse.json({ message: "Cart not found or empty", userId }, { status: 404 });
     }
+
+    if (userCart.items.length === 0) {
+        console.log(`[PlaceOrder] Cart is empty for userId: ${userId}`);
+        return NextResponse.json({ message: "Cart not found or empty", userId }, { status: 404 });
+    }
+    
+    console.log(`[PlaceOrder] Cart found with ${userCart.items.length} items`);
     
     const addressDoc = await Address.findOne({ userId });
     const selectedAddress = addressDoc?.addresses?.find(
@@ -63,12 +72,16 @@ export async function POST(req: NextRequest) {
         
         // Decrement stock
         if (productType === 'ContactLens') {
-            await ContactLens.findByIdAndUpdate(item.productId, { $inc: { stock: -orderQty } });
+           const prod = await ContactLens.findById(item.productId);
+           prod.stock = Number(prod.stock) - orderQty;
+           await prod.save(); 
         } else {
-            await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -orderQty } });
+           const prod = await Product.findById(item.productId);
+           prod.stock = Number(prod.stock) - orderQty;
+           await prod.save();
         }
 
-        const quantity = item.quantity || 1;
+        const quantity = Number(item.quantity) || 1;
         const price = Number(item.price); // Use price from cart item to respect purchase time price
         const subtotal = price * quantity;
         
@@ -87,6 +100,7 @@ export async function POST(req: NextRequest) {
           paymentStatus: razorpay_payment_id ? "paid" : "pending",
           orderStatus: "processing",
           statusHistory: [{ status: "processing", updatedAt: new Date() }],
+          address: selectedAddress // Save address snapshot
         };
 
         if (productType === 'ContactLens') {

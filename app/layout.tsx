@@ -54,12 +54,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* Razorpay Script */}
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="beforeInteractive"
-      />
       <body className="antialiased bg-white text-gray-900">
+        <Script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="lazyOnload"
+        />
         <SessionWrapper>
           <ReduxProvider>
             <Header />

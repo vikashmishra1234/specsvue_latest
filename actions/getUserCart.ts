@@ -20,7 +20,7 @@ export default async function getUserCart(userId: string) {
     await ContactLens.init();
     
     // We don't populate here because we need to handle mixed types
-    let currentUserCart = await Cart.findOne({ userId }).lean();
+    let currentUserCart: any = await Cart.findOne({ userId }).lean();
 
     if (!currentUserCart) {
       return {

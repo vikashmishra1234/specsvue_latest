@@ -1,11 +1,11 @@
-
+import { Suspense } from 'react';
 import UserLogin from '../components/client-components/LoginButton'
 
 const page = () => {
   return (
-    <>
-   <UserLogin/>
-    </>
+    <Suspense fallback={<div>Loading...</div>}>
+       <UserLogin/>
+    </Suspense>
   )
 }
 
