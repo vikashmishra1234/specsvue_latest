@@ -1,145 +1,121 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 const slides = [
   {
     id: 1,
-    title: "Get 20% Off on Eyewear with Prescription",
-    description:
-      "Unlock 20% off on your next pair of eyeglasses when you upload your prescription at VisionHub. Enjoy clear vision with stylish frames, unmatched comfort, and expert-recommended lenses — all at a discounted price.",
+    subtitle: "Premium Eyewear",
+    title: "See the World Clearly",
+    description: "Get 20% off on your first prescription glasses. Premium lenses included.",
     image: "/images/banner-3.png",
-    cta: "Save 20% Now",
-    alt: "Collection of premium prescription glasses frames",
-    nav: "prescription",
+    cta: "Shop Eyeglasses",
+    href: "/products",
+    align: "left"
   },
   {
     id: 2,
-    title: "SpecsVue – Redefining Eyewear Fashion",
-    description:
-      "Discover premium spectacles and sunglasses at SpecsVue.in – where style, clarity, and comfort come together. From modern trends to timeless classics, find eyewear that enhances your look and vision.",
+    subtitle: "New Collection",
+    title: "Timeless Sunglasses",
+    description: "Protect your eyes with style. UV400 protection in every pair.",
     image: "/images/banner-4.png",
-    cta: "Shop Eyewear Now",
-    alt: "SpecsVue eyewear store showcasing stylish spectacles and sunglasses",
-    nav: "products",
+    cta: "Explore Shades",
+    href: "/products",
+    align: "left"
   },
 ];
 
 const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-  const goToNextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, []);
-
-  const goToPrevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+  const next = useCallback(() => setCurrent((p) => (p + 1) % slides.length), []);
+  const prev = useCallback(() => setCurrent((p) => (p - 1 + slides.length) % slides.length), []);
 
   useEffect(() => {
-    const timer = setInterval(goToNextSlide, 6000);
+    const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
-  }, [goToNextSlide]);
-
-  const currentSlideData = slides[currentSlide];
+  }, [next]);
 
   return (
-    <section
-      aria-label="Featured Eyewear Promotions"
-      className="relative w-full h-[calc(100vh-170px)] md:h-[calc(100vh-126px)] overflow-hidden bg-black"
-    >
-      {/* Screen reader updates */}
-      <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {`Slide ${currentSlide + 1} of ${slides.length}: ${currentSlideData.title}`}
-      </div>
-
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        <AnimatePresence initial={false} mode="wait">
-          <motion.div
-            key={currentSlideData.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            {/* Background image */}
-            <div className="absolute inset-0 z-0">
-              <Image
-                src={currentSlideData.image}
-                alt={currentSlideData.alt}
-                fill
-                priority={currentSlide === 0}
-                sizes="(max-width: 768px) 100vw, 100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+    <section className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-black text-white">
+      {/* Slides */}
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === current ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
+        >
+            {/* Image Layer */}
+            <div className="absolute inset-0">
+                <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    priority={index === 0} // Only priority load the first one
+                    className="object-cover opacity-90"
+                    sizes="100vw"
+                />
+                <div className="absolute inset-0 bg-black/40"></div> {/* Dark Overlay */}
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 flex h-full items-center">
-              <div className="container max-w-7xl mx-auto px-4 md:px-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: "easeInOut",
-                    delay: 0.2,
-                  }}
-                  className="max-w-3xl"
-                >
-                  {/* Use H1 only once per page; make this H2 if another H1 exists */}
-                  <h1 className="text-3xl text-center sm:text-left sm:text-5xl md:text-6xl font-bold text-white mb-6">
-                    {currentSlideData.title}
-                  </h1>
-
-                  <p className="text-lg text-center sm:text-left sm:text-xl text-gray-200 mb-8 max-w-xl">
-                    {currentSlideData.description}
-                  </p>
-
-                  <div className="flex justify-center sm:justify-start">
-                    <Link
-                      href={`/${currentSlideData.nav}`}
-                      prefetch={true}
-                      aria-label={`Go to ${currentSlideData.nav} page`}
-                      className="inline-block px-6 py-3 sm:px-8 sm:py-4 bg-white text-black text-lg font-semibold rounded-full hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            {/* Content Layer */}
+            <div className="absolute inset-0 flex items-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div 
+                        className={`max-w-xl transition-all duration-1000 delay-300 transform ${
+                            index === current ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+                        } ${slide.align === 'right' ? 'ml-auto text-right' : 'text-left'}`}
                     >
-                      {currentSlideData.cta}
-                    </Link>
-                  </div>
-                </motion.div>
-              </div>
+                        <span className="inline-block py-1 px-3 border border-white/30 rounded-full text-xs md:text-sm font-semibold uppercase tracking-wider mb-4 bg-white/10 backdrop-blur-md">
+                            {slide.subtitle}
+                        </span>
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                            {slide.title}
+                        </h1>
+                        <p className="text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
+                            {slide.description}
+                        </p>
+                        
+                        <div className={`flex ${slide.align === 'right' ? 'justify-end' : 'justify-start'}`}>
+                             <Link
+                                href={slide.href}
+                                className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover:scale-105"
+                             >
+                                {slide.cta}
+                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform"/>
+                             </Link>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </motion.div>
-        </AnimatePresence>
+        </div>
+      ))}
+
+      {/* Controls */}
+      <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center gap-3">
+        {slides.map((_, idx) => (
+            <button
+                key={idx}
+                onClick={() => setCurrent(idx)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === current ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/60"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+            />
+        ))}
       </div>
 
-      {/* Prev Button */}
-      <div className="absolute inset-y-0 left-4 flex items-center z-20">
-        <button
-          onClick={goToPrevSlide}
-          className="p-2 rounded-full bg-[#0d0d0d70] hover:bg-white/20 text-white transition-all transform hover:scale-110"
-          aria-label="Previous Slide"
-        >
-          <ChevronLeft size={32} />
-        </button>
-      </div>
+      <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 text-white/50 hover:text-white transition-colors">
+        <ChevronLeft size={40} />
+      </button>
+      <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 text-white/50 hover:text-white transition-colors">
+        <ChevronRight size={40} />
+      </button>
 
-      {/* Next Button */}
-      <div className="absolute inset-y-0 right-4 flex items-center z-20">
-        <button
-          onClick={goToNextSlide}
-          className="p-2 rounded-full bg-[#0d0d0d70] hover:bg-white/20 text-white transition-all transform hover:scale-110"
-          aria-label="Next Slide"
-        >
-          <ChevronRight size={32} />
-        </button>
-      </div>
     </section>
   );
 };

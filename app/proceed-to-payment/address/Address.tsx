@@ -113,80 +113,139 @@ const Address: React.FC<Props> = ({ userId, email, cart, existingAddresses }) =>
   };
 
   return (
-    <div className="pt-8 flex flex-col gap-8 md:flex-row">
+    <div className="pt-8 flex flex-col gap-8 lg:flex-row max-w-6xl mx-auto">
       {/* LEFT: Address Form */}
-      <div className="flex-1 max-w-2xl space-y-4">
-        <h1 className="text-2xl font-bold text-[#0d0c22] mb-2">Delivery Address</h1>
+      <div className="flex-1 space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900">Delivery Address</h1>
+        </div>
 
         {!editing && savedAddressId ? (
-          <div className="border p-4 rounded-lg bg-gray-50">
-            <p className="font-medium mb-1">{formData.name}</p>
-            <p className="text-sm text-gray-700">
-              {formData.houseNumberOrBuildingName}, {formData.areaOrLocality}, {formData.pincode}
-            </p>
-            {formData.landmark && <p className="text-sm text-gray-500">Landmark: {formData.landmark}</p>}
-            <p className="text-sm text-gray-500">Phone: {formData.phone}</p>
+          <div className="border border-gray-200 p-6 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-col">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        {formData.name}
+                        <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Default</span>
+                    </h3>
+                    <p className="text-gray-500 text-sm mt-1">{formData.phone}</p>
+                </div>
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm text-gray-700 leading-relaxed">
+              <p>{formData.houseNumberOrBuildingName}</p>
+              <p>{formData.areaOrLocality}</p>
+              <p>{formData.landmark ? `Near ${formData.landmark}, ` : ''}{formData.pincode}</p>
+            </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-6">
               <button
                 onClick={handleProceed}
-                className="bg-[#0d0c22] text-white px-6 py-2 rounded-lg font-semibold"
+                className="bg-black text-white px-8 py-2.5 rounded-xl font-semibold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"
               >
-                Deliver to this Address
+                Deliver Here
               </button>
               <button
                 onClick={handleChangeAddress}
-                className="border border-gray-400 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100"
+                className="border border-gray-300 text-gray-700 px-6 py-2.5 rounded-xl font-medium hover:bg-gray-50 transition-colors"
               >
-                Change Address
+                Edit Address
               </button>
             </div>
           </div>
         ) : (
-          <form className="space-y-4 mt-4" onSubmit={(e) => e.preventDefault()}>
-            <input name="pincode" value={formData.pincode} onChange={handleChange} placeholder="Pincode*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
-            <input name="houseNumberOrBuildingName" value={formData.houseNumberOrBuildingName} onChange={handleChange} placeholder="House no, Building name*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
-            <input name="areaOrLocality" value={formData.areaOrLocality} onChange={handleChange} placeholder="Road name, Area, Locality*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
-            <input name="landmark" value={formData.landmark} onChange={handleChange} placeholder="Landmark (optional)" className="w-full p-3 rounded-md bg-[#e6e6f9]" />
-            <input name="name" value={formData.name} onChange={handleChange} placeholder="Name*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
-            <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone number*" className="w-full p-3 rounded-md bg-[#e6e6f9]" required />
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+             <h3 className="text-lg font-semibold mb-4 text-gray-800">Add New Address</h3>
+             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium text-gray-500 ml-1">Full Name</label>
+                        <input name="name" value={formData.name} onChange={handleChange} placeholder="e.g. John Doe" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" required />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium text-gray-500 ml-1">Phone Number</label>
+                        <input name="phone" value={formData.phone} onChange={handleChange} placeholder="e.g. 9876543210" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" required />
+                    </div>
+                </div>
 
-            <button
-              disabled={loading}
-              onClick={handleSaveAddress}
-              className="bg-[#0d0c22] text-white px-6 py-2 rounded-lg font-semibold"
-              type="button"
-            >
-              {loading ? "Saving..." : "Save & Continue"}
-            </button>
-          </form>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium text-gray-500 ml-1">Pincode</label>
+                        <input name="pincode" value={formData.pincode} onChange={handleChange} placeholder="e.g. 110001" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" required />
+                    </div>
+                    <div className="space-y-1">
+                         <label className="text-xs font-medium text-gray-500 ml-1">Flat, House no., Building</label>
+                        <input name="houseNumberOrBuildingName" value={formData.houseNumberOrBuildingName} onChange={handleChange} placeholder="e.g. Flat 101, Blue Spires" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" required />
+                    </div>
+                </div>
+
+                <div className="space-y-1">
+                    <label className="text-xs font-medium text-gray-500 ml-1">Area, Street, Sector, Village</label>
+                    <input name="areaOrLocality" value={formData.areaOrLocality} onChange={handleChange} placeholder="e.g. Sector 62, Noida" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" required />
+                </div>
+                
+                 <div className="space-y-1">
+                    <label className="text-xs font-medium text-gray-500 ml-1">Landmark (Optional)</label>
+                    <input name="landmark" value={formData.landmark} onChange={handleChange} placeholder="e.g. Near Metro Station" className="w-full p-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" />
+                </div>
+
+                <div className="pt-2">
+                    <button
+                    disabled={loading}
+                    onClick={handleSaveAddress}
+                    className="w-full md:w-auto bg-black text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    type="button"
+                    >
+                    {loading ? "Saving..." : "Save & Continue"}
+                    </button>
+                    {savedAddressId && (
+                         <button
+                            onClick={() => setEditing(false)}
+                            className="w-full md:w-auto mt-3 md:mt-0 md:ml-3 text-gray-500 px-6 py-3 rounded-xl font-medium hover:text-gray-800 transition-colors"
+                            type="button"
+                        >
+                            Cancel
+                        </button>
+                    )}
+                </div>
+            </form>
+          </div>
         )}
       </div>
 
       {/* RIGHT: Bill Summary */}
-      <div className="w-full md:max-w-sm h-fit bg-white rounded-xl p-6 shadow-md">
-        <p className="text-xl font-medium mb-4">Bill Details</p>
-        <div className="text-sm space-y-2 border-t pt-4 border-gray-200">
-          <div className="flex justify-between">
-            <span>Total item price</span>
-            <span>₹{cart?.cartTotal + 947}</span>
-          </div>
-          <div className="flex justify-between text-green-600">
-            <span>Total discount</span>
-            <span>−₹947</span>
-          </div>
-          <div className="flex justify-between font-semibold pt-2 text-[#0d0c22]">
-            <span>Total payable</span>
-            <span>₹{cart?.cartTotal}</span>
-          </div>
+      <div className="w-full lg:w-[380px] h-fit bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-4">
+        <h2 className="text-lg font-bold text-gray-900 mb-6 pb-4 border-b">Order Summary</h2>
+        <div className="space-y-3 mb-6">
+            <div className="flex justify-between text-gray-600 text-sm">
+                <span>Total item price</span>
+                <span>₹{(cart?.cartTotal || 0) + 947}</span>
+            </div>
+            <div className="flex justify-between text-green-600 text-sm">
+                <span>Discount</span>
+                <span>−₹947</span>
+            </div>
+             <div className="flex justify-between text-gray-600 text-sm">
+                <span>Delivery</span>
+                <span className="text-green-600">Free</span>
+            </div>
+        </div>
+        
+        <div className="border-t border-gray-100 pt-4 flex justify-between items-center mb-6">
+            <span className="text-gray-900 font-bold">Total Payable</span>
+             <span className="text-2xl font-bold text-gray-900">₹{cart?.cartTotal}</span>
         </div>
 
         <button
           onClick={handleProceed}
-          className="mt-6 w-full cursor-pointer bg-[#0d0c22] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
+          className="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl active:scale-[0.98]"
         >
-          Deliver to this Address
+          Deliver Here
         </button>
+        
+        <p className="text-xs text-center text-gray-400 mt-4">
+            Secure checkout powered by Razorpay
+        </p>
       </div>
     </div>
   );

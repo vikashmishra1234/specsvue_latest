@@ -1,4 +1,3 @@
-
 import React from "react";
 import RemoveProductFromCartButton from "./RemoveProductFromCartButton";
 import Image from "next/image";
@@ -21,61 +20,86 @@ const ContactLensCartCard: React.FC<any> = ({ session, data, setChange }) => {
   const userId = session?.user.userId || localStorage.getItem('guestId') as string;
 
   return (
-    <div className="flex flex-row md:flex-row justify-between gap-5 p-5 rounded-2xl shadow-md bg-white w-full max-w-4xl hover:shadow-lg transition">
+    <div className="flex flex-col sm:flex-row gap-6 p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Product Image */}
-      <div className="w-[100px] md:w-[200px] flex-shrink-0">
-         <div className="aspect-square relative rounded-xl overflow-hidden border">
-            <Image
-            src={productId.images?.[0] || "/placeholder.jpg"}
-            alt="product"
-            fill
-            className="object-contain"
-            />
-         </div>
+      <div className="w-full sm:w-[160px] flex-shrink-0 bg-gray-50 rounded-xl p-4 flex items-center justify-center relative overflow-hidden">
+        <Image
+          src={productId.images?.[0] || "/placeholder.jpg"}
+          alt="product"
+          fill
+          className="object-contain p-2 hover:scale-105 transition-transform duration-500"
+        />
       </div>
 
       {/* Details */}
-      <div className="flex flex-col justify-between w-full space-y-3">
-        <div className="space-y-2">
-          <h3 className="text-sm md:text-xl font-semibold text-gray-800 capitalize">
-            {productId.name}
-          </h3>
-          <p className="text-sm text-blue-600 font-medium">{productId.brandName} - {productId.lensType}</p>
+      <div className="flex flex-col justify-between flex-1">
+        <div>
+           <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 capitalize leading-tight">
+                    {productId.name}
+                </h3>
+                <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-md font-medium whitespace-nowrap ml-2">
+                    {productId.lensType}
+                </span>
+           </div>
+           
+           <p className="text-gray-500 text-sm mb-4 font-medium">
+             {productId.brandName}
+           </p>
 
-          <div className="text-sm text-gray-600 grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
-             <p>Power: <b>{power}</b></p>
-             {cylinder && <p>Cyl: <b>{cylinder}</b></p>}
-             {axis && <p>Axis: <b>{axis}</b></p>}
-             {baseCurve && <p>BC: <b>{baseCurve}</b></p>}
-             {diameter && <p>Dia: <b>{diameter}</b></p>}
-             {color && <p>Color: <b>{color}</b></p>}
-          </div>
-
-          <div className="text-sm text-gray-600 space-y-1 mt-2 pt-2 border-t">
-            <div className="flex justify-between">
-              <span>Price per box:</span>
-              <span>₹{price}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Quantity:</span>
-              <span>{quantity}</span>
-            </div>
-          </div>
-
-          <div className="flex justify-between font-semibold text-gray-800 border-t pt-2 mt-2">
-            <span>Final Total:</span>
-            <span>₹{finalPrice}</span>
-          </div>
+           {/* Lens Specs Grid */}
+           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <div className="flex flex-col">
+                    <span className="text-gray-400">Power</span>
+                    <span className="font-semibold text-gray-900">{power || 'N/A'}</span>
+                </div>
+                {cylinder && (
+                    <div className="flex flex-col">
+                        <span className="text-gray-400">Cylinder</span>
+                        <span className="font-semibold text-gray-900">{cylinder}</span>
+                    </div>
+                )}
+                {axis && (
+                    <div className="flex flex-col">
+                        <span className="text-gray-400">Axis</span>
+                        <span className="font-semibold text-gray-900">{axis}</span>
+                    </div>
+                )}
+                {color && (
+                    <div className="flex flex-col">
+                        <span className="text-gray-400">Color</span>
+                        <span className="font-semibold text-gray-900">{color}</span>
+                    </div>
+                )}
+                 {baseCurve && (
+                    <div className="flex flex-col">
+                        <span className="text-gray-400">Base Curve</span>
+                        <span className="font-semibold text-gray-900">{baseCurve}</span>
+                    </div>
+                )}
+           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3 md:pt-4 justify-between items-center">
-            {productId.stock !== undefined && (
-                <div className={`text-sm ${productId.stock > 0 ? "text-green-600" : "text-red-600"}`}>
-                    {productId.stock > 0 ? `In Stock` : "Out of Stock"}
-                </div>
-            )}
-           <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-4">
+                 <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>Qty:</span>
+                    <div className="font-semibold text-gray-900 bg-gray-100 px-3 py-1 rounded-md">{quantity} Box(es)</div>
+                 </div>
+                 <div className="text-lg font-bold text-gray-900">
+                    ₹{finalPrice}
+                 </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+                {productId.stock !== undefined && (
+                   <span className={`text-xs font-medium ${Number(productId.stock) > 0 ? "text-green-600" : "text-red-500"}`}>
+                       {Number(productId.stock) > 0 ? "In Stock" : "Out of Stock"}
+                   </span>
+                )}
+                <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
+            </div>
         </div>
       </div>
     </div>

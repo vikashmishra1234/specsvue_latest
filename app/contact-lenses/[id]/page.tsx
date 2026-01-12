@@ -142,7 +142,11 @@ const ContactLensDetail = () => {
     if (loading) return <div className="p-20 text-center animate-pulse">Loading Details...</div>;
     if (error || !lens) return <div className="p-20 text-center text-red-500">{error || "Product not found"}</div>;
 
+    const isOutOfStock = (lens.stock || 0) <= 0;
+
     const handleAddToCart = async () => {
+        if (isOutOfStock) return;
+        
         const userId = session?.user?.userId;
         if (!userId) {
             Swal.fire("Please Login", "You need to login to add to cart", "warning");
@@ -246,7 +250,14 @@ const ContactLensDetail = () => {
                     {/* Interaction Section */}
                     <div className="p-8 md:p-12 flex flex-col h-full overflow-y-auto">
                         <div className="mb-6">
-                            <span className="text-blue-600 font-bold uppercase tracking-wider text-xs mb-1 block">{lens.brandName}</span>
+                            <div className="flex justify-between items-start">
+                                <span className="text-blue-600 font-bold uppercase tracking-wider text-xs mb-1 block">{lens.brandName}</span>
+                                {isOutOfStock && (
+                                    <span className="px-3 py-1 bg-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                        Out of Stock
+                                    </span>
+                                )}
+                            </div>
                             <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">{lens.name}</h1>
                             <div className="flex items-center gap-3 mb-4">
                                 <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-600">{lens.lensType}</span>
@@ -295,7 +306,7 @@ const ContactLensDetail = () => {
                             )}
                         </div>
 
-                        <div className="bg-gray-50 rounded-2xl p-6 mb-8">
+                        <div className={`bg-gray-50 rounded-2xl p-6 mb-8 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}`}>
                             <h3 className="font-bold text-gray-900 mb-4 flex justify-between items-center">
                                 Prescription
                                 <div className="flex bg-white rounded-lg p-1 shadow-sm border">
@@ -326,10 +337,15 @@ const ContactLensDetail = () => {
 
                         <button 
                             onClick={handleAddToCart} 
-                            disabled={adding}
-                            className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-900 transition-all disabled:opacity-70 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0"
+                            disabled={adding || isOutOfStock}
+                            className={`w-full py-4 rounded-xl font-bold text-lg transition-all shadow-lg transform active:translate-y-0
+                                ${isOutOfStock 
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' 
+                                    : 'bg-black text-white hover:bg-gray-900 hover:shadow-xl hover:-translate-y-1'
+                                }
+                            `}
                         >
-                            {adding ? "Adding to Cart..." : "Add to Cart"}
+                            {isOutOfStock ? "Out of Stock" : (adding ? "Adding to Cart..." : "Add to Cart")}
                         </button>
                     </div>
                 </div>

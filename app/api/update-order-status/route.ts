@@ -7,6 +7,7 @@ import ContactLens from "@/models/ContactLens";
 import nodemailer from "nodemailer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import Razorpay from "razorpay";
 
 export async function PUT(req: NextRequest) {
   try {
@@ -66,7 +67,7 @@ export async function PUT(req: NextRequest) {
       if (process.env.EMAIL_USER) {
           const adminMail = {
             from: `"Specsvue Alerts" <${process.env.EMAIL_USER}>`,
-            to: "vikashmishra8371@gmail.com", // Admin email
+            to: process.env.ADMIN_EMAIL || "vikashmishra8371@gmail.com", // Admin email
             subject: `Order Cancellation Request - ${order.orderId}`,
             html: `
               <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; max-width: 600px; margin: auto;">
@@ -116,11 +117,12 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // 🔴 Handle Final Cancellation (Admin Action) - RESTOCKING LOGIC
+    // 🔴 Handle Final Cancellation (Admin Action) - RESTOCKING & REFUND LOGIC
     if (orderStatus === "cancelled") {
       const productId = order.productId;
       const quantityToRestock = Number(order.quantity) || 1;
 
+      // 1. Restock Logic
       if (order.productType === 'ContactLens') {
            const lens = await ContactLens.findById(productId);
            if (lens) {
@@ -131,10 +133,51 @@ export async function PUT(req: NextRequest) {
            // Frame
            const product = await Product.findById(productId);
            if (product) {
-               // Ensure stock is number
                product.stock = Number(product.stock) + quantityToRestock;
                await product.save();
            }
+      }
+
+      // 2. 💸 Automatic Refund Logic
+      let refundMessage = "";
+      if (
+          order.paymentMethod === 'razorpay' && 
+          order.paymentStatus === 'paid' && 
+          order.razorpay_payment_id
+      ) {
+          try {
+             // Init Razorpay
+             const razorpay = new Razorpay({
+                key_id: process.env.RAZORPAY_KEY_ID!,
+                key_secret: process.env.RAZORPAY_KEY_SECRET!,
+             });
+
+             console.log(`Attempting refund for Order: ${order.orderId}, PaymentID: ${order.razorpay_payment_id}`);
+             
+             const refund = await razorpay.payments.refund(order.razorpay_payment_id, {
+                 speed: 'normal',
+                 notes: {
+                     reason: "Admin cancelled order",
+                     orderId: order.orderId
+                 }
+             });
+
+             if (refund && refund.id) {
+                 order.refundId = refund.id;
+                 order.refundStatus = 'completed';
+                 refundMessage = ". Refund initiated successfully.";
+                 order.statusHistory.push({
+                    status: "refunded",
+                    updatedAt: new Date(),
+                    comment: `Refund ID: ${refund.id}`
+                 });
+             }
+          } catch (refundError: any) {
+              console.error("Refund Failed:", refundError);
+              order.refundStatus = 'failed';
+              refundMessage = ". WARNING: Automatic refund failed. Please check Razorpay dashboard.";
+              // We still cancel the order locally, but log the error
+          }
       }
 
       order.orderStatus = "cancelled";
@@ -144,15 +187,10 @@ export async function PUT(req: NextRequest) {
       });
       await order.save();
       
-      // Send Cancellation Approved Email
-      if (process.env.EMAIL_USER && order.userId) { 
-           // Need user email. session might be admin here, so we might not have user email in session.
-           // However, we don't store user email in Order model explicitly, usually fetched via User model.
-           // For now, if Admin performs this, 'session' is Admin. 
-           // We can't email the user unless we fetch the User or if email is stored in Order (not in schema).
-           // Assuming we can skip user email if not available, OR fetch user.
-           // I will verify User model later. For now, skipping if email not found.
-      }
+      return NextResponse.json(
+        { success: true, data: order, message: `Order cancelled successfully${refundMessage}` },
+        { status: 200 }
+      );
     }
 
     // 🟢 For other statuses (delivered, shipped, etc.)

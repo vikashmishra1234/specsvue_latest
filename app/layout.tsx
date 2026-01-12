@@ -4,10 +4,9 @@ import Header from "@/app/components/Header";
 import ReduxProvider from "./ReduxProvider";
 import SessionWrapper from "./SessionWrapper";
 import Script from "next/script";
-import Footer from "./components/Home/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://specsvue.in"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://specsvue.in"),
   title: "SpecsVue | Eyeglasses, Sunglasses & Contact Lenses Online in Mathura",
   description:
     "Buy high-quality eyeglasses, sunglasses, kids' glasses, and contact lenses at SpecsVue Mathura. Affordable prices, prescription-ready eyewear, and trendy frames.",
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
     title: "SpecsVue | Eyewear for Everyone",
     description:
       "Discover SpecsVue's collection of eyeglasses, sunglasses, and contact lenses in Mathura. Stylish, durable, and budget-friendly eyewear for all ages.",
-    url: "https://specsvue.in",
+    url: process.env.NEXT_PUBLIC_BASE_URL || "https://specsvue.in",
     siteName: "SpecsVue",
     locale: "en_IN",
     type: "website",
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "https://specsvue.in",
+    canonical: process.env.NEXT_PUBLIC_BASE_URL || "https://specsvue.in",
   },
   icons: {
     icon: "/favicon.ico",
@@ -63,7 +62,7 @@ export default function RootLayout({
           <ReduxProvider>
             <Header />
             <main>{children}</main>
-            <Footer />
+            {/* <Footer /> */}
           </ReduxProvider>
         </SessionWrapper>
       </body>

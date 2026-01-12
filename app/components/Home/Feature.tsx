@@ -1,4 +1,5 @@
 
+"use client";
 
 import { motion } from "framer-motion"
 
@@ -32,20 +33,17 @@ const Feature = () => {
             {[
               {
                 title: "Premium Materials",
-                description:
-                  "Our frames are crafted from high-quality, durable materials that ensure comfort and longevity.",
+                description: "Our frames are crafted from high-quality, durable materials that ensure comfort and longevity.",
                 icon: "🔍",
               },
               {
                 title: "Advanced Lens Technology",
-                description:
-                  "Experience crystal clear vision with our anti-glare, UV-protected, and blue light filtering lenses.",
+                description: "Experience crystal clear vision with our anti-glare, UV-protected, and blue light filtering lenses.",
                 icon: "✨",
               },
               {
                 title: "Expert Craftsmanship",
-                description:
-                  "Each pair of glasses is meticulously crafted by skilled artisans with decades of experience.",
+                description: "Each pair of glasses is meticulously crafted by skilled artisans with decades of experience.",
                 icon: "🛠️",
               },
               {
@@ -64,18 +62,14 @@ const Feature = () => {
                 icon: "💰",
               },
             ].map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

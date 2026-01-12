@@ -79,13 +79,8 @@ export default function Collections() {
             },
           ].map((collection, index) => (
            <Link key={index} href={collection.href}>
-            <motion.div
-              
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group z-10 relative overflow-hidden rounded-xl"
+            <div
+              className="group z-10 relative overflow-hidden rounded-xl transition-all duration-300 hover:shadow-lg"
             >
               <div className="aspect-[3/4] overflow-hidden">
                 <Image
@@ -93,6 +88,7 @@ export default function Collections() {
                   alt={collection.title}
                   width={300}
                   height={400}
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
@@ -102,18 +98,14 @@ export default function Collections() {
               <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">{collection.title}</h3>
                 <p className="mb-4 opacity-90">{collection.description}</p>
-                <motion.button
-                  
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex z-0 cursor-pointer items-center justify-center w-full sm:w-10 h-10 rounded-full bg-white text-gray-900 group-hover:w-32 transition-all duration-300 sm:overflow-hidden"
-                  type="button"
+                <div
+                  className="flex z-0 items-center justify-center w-10 h-10 rounded-full bg-white text-gray-900 group-hover:w-32 transition-all duration-300 overflow-hidden"
                 >
-                  <span className="sm:hidden group-hover:inline mr-1">Explore</span>
+                  <span className="opacity-0 w-0 group-hover:w-auto group-hover:opacity-100 transition-all duration-300 whitespace-nowrap mr-0 group-hover:mr-1">Explore</span>
                   <ChevronRight size={16} />
-                </motion.button>
+                </div>
               </div>
-            </motion.div>
+            </div>
            </Link>
           ))}
         </div>

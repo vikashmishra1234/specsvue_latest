@@ -29,13 +29,8 @@ const RemoveProductFromCartButton: React.FC<any> = ({setChange, data, userId }) 
       setLoading(false)
     }
   };
-  useEffect(()=>{
-    const stock = Number(data.productId?.stock);
-    if(stock<=0){
-      removeCartProduct()
-    }
-
-  },[])
+  // Auto-removal logic removed to prevent silent deletion.
+  // User should see "Out of Stock" and remove it manually.
   return (
     <button
     disabled={loading}

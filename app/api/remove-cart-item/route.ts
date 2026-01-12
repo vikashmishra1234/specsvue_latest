@@ -8,9 +8,9 @@ export async function DELETE(req: NextRequest) {
 
     const { userId, cartProductId, lensId } = await req.json();
 
-    if (!userId || !cartProductId || !lensId) {
+    if (!userId || !cartProductId) {
       return NextResponse.json(
-        { message: "Missing userId, cartProductId, or lensId" },
+        { message: "Missing userId or cartProductId" },
         { status: 400 }
       );
     }
@@ -22,33 +22,52 @@ export async function DELETE(req: NextRequest) {
     }
 
     const itemsToRemove = cart.items.filter(
-  (item: any) => item.cartProductId === cartProductId && item.lensId === lensId
-);
+      (item: any) => {
+          // If request has lensId, check it. If not, check if item has no lensId.
+          // Or simplified: check cartProductId match AND (lensId match OR both undefined/null)
+          
+          if (item.cartProductId !== cartProductId) return false;
+          
+          if (lensId) {
+              return item.lensId === lensId;
+          } else {
+              // If no lensId provided in request, we assume we are removing an item that has NO lensId attached (like a frame only).
+              // However, if the item HAS a lensId but we didn't send it, we might accidentally remove the wrong thing?
+              // Typically frame-only add-to-cart sends NO lensId.
+              // So we match items where lensId is falsy.
+              return !item.lensId;
+          }
+      }
+    );
 
-if (itemsToRemove.length === 0) {
-  return NextResponse.json(
-    { message: "Item not found in the cart" },
-    { status: 404 }
-  );
-}
+    if (itemsToRemove.length === 0) {
+      return NextResponse.json(
+        { message: "Item not found in the cart" },
+        { status: 404 }
+      );
+    }
 
-// Calculate how much to subtract
-const removeAmount = itemsToRemove.reduce(
-  (sum: number, item: any) => sum + (item.price * (item.quantity || 1)),
-  0
-);
+    // Calculate how much to subtract
+    const removeAmount = itemsToRemove.reduce(
+      (sum: number, item: any) => sum + (item.price * (item.quantity || 1)),
+      0
+    );
 
-const updatedTotal = cart.cartTotal - removeAmount;
+    const updatedTotal = cart.cartTotal - removeAmount;
 
-// Keep only the remaining items
-const newCartItems = cart.items.filter(
-  (item: any) => !(item.cartProductId === cartProductId && item.lensId === lensId)
-);
+    // Keep only the remaining items
+    const newCartItems = cart.items.filter(
+      (item: any) => {
+          if (item.cartProductId !== cartProductId) return true;
+          if (lensId) return item.lensId !== lensId;
+          return !!item.lensId; // If we are removing items with NO lensId, keep items WITH lensId
+      }
+    );
 
-await Cart.findOneAndUpdate(
-  { userId },
-  { $set: { cartTotal: updatedTotal, items: newCartItems } }
-);
+    await Cart.findOneAndUpdate(
+      { userId },
+      { $set: { cartTotal: updatedTotal, items: newCartItems } }
+    );
 
     return NextResponse.json(
       { message: "Product is removed from the cart" },

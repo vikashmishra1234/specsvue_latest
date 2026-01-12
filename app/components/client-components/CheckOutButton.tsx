@@ -20,7 +20,7 @@ export const handleCheckout = async (
         amount: data.amount,
         currency: data.currency,
         name: 'Specsvue',
-        description: 'Test Payment',
+        description: 'Order Payment',
         order_id: data.id,
         handler: async function (response: any) {
           const body = {
@@ -29,6 +29,7 @@ export const handleCheckout = async (
             razorpay_signature: response.razorpay_signature,
             amount,
             userId,
+            addressId, // ✅ Pass addressId here for atomic order placement
           };
 
           try {
@@ -38,27 +39,52 @@ export const handleCheckout = async (
             const verifyData = verifyRes.data;
 
             if (verifyData.verified) {
-               handlePlaceOrder(addressId, response.razorpay_payment_id, router,userId);
+              if (verifyData.orderPlaced) {
+                  // ✅ Success! Order placed.
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Order successful',
+                    timer: 2000,
+                    showConfirmButton: false
+                  });
+                  router.push('/user');
+              } else if (verifyData.refundInitiated) {
+                  // ⚠️ Payment received but order failed (stock etc.) -> Auto Refunded
+                  Swal.fire({
+                    icon: 'warning',
+                    title: 'Order Failed',
+                    text: verifyData.error || 'Payment received but order could not be placed. Refund initiated.',
+                    footer: 'Please check your email for refund details.'
+                  });
+              } else {
+                   // ❌ Should typically not happen unless server error with NO refund
+                   Swal.fire({
+                    icon: 'error',
+                    title: 'Order Processing Error',
+                    text: verifyData.error || 'Payment verified but order creation failed. Please contact support.',
+                  });
+              }
             } else {
               Swal.fire({
                 icon: 'error',
                 title: '❌ Payment verification failed.',
+                text: verifyData.error
               });
             }
-          } catch (error) {
+          } catch (error: any) {
+            console.error("Verification error:", error);
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'Something went wrong while verifying payment.',
+              text: error.response?.data?.error || 'Something went wrong while verifying payment.',
             });
           } finally {
-            setIsLoading(false); // ✅ always stop loading at end of verification
+            setIsLoading(false);
           }
         },
         prefill: {
-          name: 'vikash mishra',
-          email: 'vikash@example.com',
-          contact: '9999999999',
+          name: 'Specsvue User',
+          contact: '',
         },
         theme: {
           color: '#6366f1',
@@ -73,45 +99,9 @@ export const handleCheckout = async (
       Swal.fire({
         icon: 'error',
         title: 'Checkout Failed',
-        text: 'Something went wrong during checkout.',
+        text: 'Something went wrong during checkout initialization.',
       });
       setIsLoading(false);
     }
-  }
-};
-
-const handlePlaceOrder = async (
-  addressId: string,
-  razorpay_payment_id: string,
-  router: any,
-  userId:string
-) => {
-  try {
-    const res = await axios.post("/api/place-order", { addressId, razorpay_payment_id });
-    console.log('order response')
-    console.log(res)
-
-    if (res.status === 200) {
-      const data = {...res.data,userId}
-      await axios.post('/api/send-bill',data);
-      Swal.fire({
-        icon: 'success',
-        title: 'Order successful',
-      });
-      router.push('/proceed-to-payment/summary');
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Order Failed',
-        text: res.data.message || "Order failed.",
-      });
-    }
-  } catch (err) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Something went wrong while placing the order.',
-    });
-    console.error(err);
   }
 };

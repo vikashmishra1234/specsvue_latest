@@ -8,8 +8,8 @@ import bcrypt from 'bcryptjs';
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: '707492812240-9ogsn6uh1ggmcqq5ejg1s32hp6ov3924.apps.googleusercontent.com',
-      clientSecret: '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',
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
         name: "OTP Login",

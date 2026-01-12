@@ -15,9 +15,9 @@ const Home = () => {
       <div className="bg-gray-100 py-10 px-4">
         <ProductsPage productType={null} />
       </div>
-      <Collections />
-      <Feature />
-      <Contact />
+      {/* <Collections /> */}
+      {/* <Feature /> */}
+      {/* <Contact /> */}
     </main>
   );
 };

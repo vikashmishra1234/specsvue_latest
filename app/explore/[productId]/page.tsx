@@ -7,7 +7,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Loading from "@/app/components/Loading";
 import LensSelectorModal from "../LensSelectorModal";
-import { Star, ShoppingCart } from "lucide-react";
+import { Star, ShoppingCart, Truck, ShieldCheck, RefreshCcw, Share2, Heart } from "lucide-react";
+import Link from "next/link";
 
 // --- TYPES ---
 interface IProduct {
@@ -21,6 +22,7 @@ interface IProduct {
   discount: number;
   brandName?: string;
   description?: string;
+  modelNumber?: string;
   [key: string]: any;
 }
 
@@ -39,6 +41,7 @@ const useProduct = (productId: string | undefined | string[]) => {
 
     const fetchProduct = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(`/api/get-product?productId=${productId}`);
         setProduct(res.data?.product || null);
       } catch {
@@ -55,55 +58,100 @@ const useProduct = (productId: string | undefined | string[]) => {
 };
 
 // --- COMPONENTS ---
+
+const SkeletonLoader = () => (
+    <div className="max-w-7xl mx-auto px-4 py-10 pt-24 animate-pulse">
+        <div className="grid lg:grid-cols-2 gap-12">
+            <div className="h-[500px] bg-gray-200 rounded-3xl"></div>
+            <div className="space-y-6">
+                <div className="h-10 w-2/3 bg-gray-200 rounded-lg"></div>
+                <div className="h-6 w-1/3 bg-gray-200 rounded-lg"></div>
+                <div className="h-24 w-full bg-gray-200 rounded-lg"></div>
+                <div className="flex gap-4">
+                     <div className="h-14 w-full bg-gray-200 rounded-xl"></div>
+                     <div className="h-14 w-full bg-gray-200 rounded-xl"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 const ErrorDisplay = ({ message }: { message: string }) => (
-  <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 text-center">
-    <div>
-      <h2 className="text-2xl font-semibold text-gray-800">Oops!</h2>
-      <p className="text-gray-600 mt-2">{message}</p>
+  <div className="flex min-h-[60vh] items-center justify-center bg-white px-4 text-center">
+    <div className="max-w-md">
+      <h2 className="text-3xl font-bold text-gray-900 mb-2">Oops!</h2>
+      <p className="text-gray-500 mb-6">{message}</p>
+      <Link href="/products" className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition">
+        Back to Products
+      </Link>
     </div>
   </div>
 );
 
 const ProductImageGallery = memo(({ images }: { images: string[] }) => {
-  const [selectedImage, setSelectedImage] = useState(images[0] || "");
+  const [selectedImage, setSelectedImage] = useState(images[0] || "/placeholder.png");
 
   return (
-    <div className="p-6 md:p-8 bg-gradient-to-b from-gray-50 to-white rounded-2xl">
+    <div className="space-y-4 sticky top-24">
       <motion.div
-        key={selectedImage}
-        initial={{ opacity: 0.7, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-white shadow-md"
+        layoutId="main-image"
+        className="relative bg-gray-50 rounded-3xl overflow-hidden shadow-sm border border-gray-100 aspect-square group"
       >
         <Image
           src={selectedImage}
-          alt="Product"
+          alt="Product View"
           fill
-          className="object-contain p-4"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
           priority
         />
+        <div className="absolute top-4 right-4 flex flex-col gap-2">
+            <button className="p-2 bg-white rounded-full shadow-md text-gray-400 hover:text-red-500 transition-colors">
+                <Heart size={20} />
+            </button>
+            <button className="p-2 bg-white rounded-full shadow-md text-gray-400 hover:text-blue-500 transition-colors">
+                <Share2 size={20} />
+            </button>
+        </div>
       </motion.div>
 
       {/* Thumbnails */}
-      <div className="flex gap-3 justify-center">
-        {images.map((img) => (
-          <motion.div
-            key={img}
-            whileHover={{ scale: 1.05 }}
+      <div className="flex gap-4 overflow-x-auto py-2 scrollbar-hide">
+        {images.map((img, idx) => (
+          <button
+            key={idx}
             onClick={() => setSelectedImage(img)}
-            className={`cursor-pointer rounded-xl overflow-hidden border-2 ${
-              selectedImage === img ? "border-blue-500" : "border-gray-200"
+            className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+              selectedImage === img ? "border-black shadow-md ring-1 ring-black/10" : "border-transparent bg-gray-50 hover:border-gray-300"
             }`}
           >
-            <Image src={img} alt="Thumbnail" width={70} height={70} className="object-cover" />
-          </motion.div>
+            <Image src={img} alt={`Thumbnail ${idx + 1}`} fill className="object-cover p-1" />
+          </button>
         ))}
       </div>
     </div>
   );
 });
 ProductImageGallery.displayName = "ProductImageGallery";
+
+const ProductSpecs = ({ product }: { product: IProduct }) => {
+    return (
+        <div className="mt-8 grid grid-cols-2 gap-4">
+            {[
+                { label: "Frame Color", value: product.frameColor },
+                { label: "Frame Shape", value: product.frameShape },
+                { label: "Frame Type", value: product.frameType },
+                { label: "Size", value: product.frameSize },
+                { label: "Model No.", value: product.modelNumber || "N/A" },
+            ].map((spec, idx) => (
+                <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <p className="text-xs text-gray-500 uppercase font-medium">{spec.label}</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{spec.value}</p>
+                </div>
+            ))}
+        </div>
+    )
+}
 
 const ProductInformation = memo(
   ({
@@ -118,61 +166,102 @@ const ProductInformation = memo(
       (Number(product.price) * product.discount) / 100
     ).toFixed(0);
 
+    const isOutOfStock = (product.stock || 0) <= 0;
+
     return (
-      <div className="flex flex-col justify-between p-8">
+      <div className="flex flex-col h-full pl-0 lg:pl-10 pt-0 lg:pt-10">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 capitalize">
-            {product.brandName || "SpecsVue Collection"}
+           {/* Header */}
+          <div className="mb-2 flex items-center gap-2">
+            <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full uppercase tracking-wider">
+                {product.frameType}
+            </span>
+             {product.discount > 0 && (
+                 <span className="px-3 py-1 bg-red-100 text-red-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                     {product.discount}% OFF
+                 </span>
+             )}
+             {isOutOfStock && (
+                <span className="px-3 py-1 bg-gray-200 text-gray-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                    Out of Stock
+                </span>
+             )}
+          </div>
+
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 capitalize tracking-tight leading-tight">
+            {product.brandName || "SpecsVue Original"}
           </h1>
-          <p className="text-gray-500 text-sm mb-6">
-            {product.description || "Premium eyewear designed for comfort and style."}
+          
+          <div className="flex items-center gap-4 mb-6">
+                <div className="flex text-yellow-500">
+                    <Star size={18} fill="currentColor" />
+                    <Star size={18} fill="currentColor" />
+                    <Star size={18} fill="currentColor" />
+                    <Star size={18} fill="currentColor" />
+                    <Star size={18} className="text-gray-300" />
+                </div>
+                <span className="text-sm text-gray-500 font-medium">4.8 (120 reviews)</span>
+          </div>
+
+          {/* Pricing */}
+          <div className="flex items-baseline gap-4 mb-8">
+            <p className="text-5xl font-bold text-gray-900">₹{discountedPrice}</p>
+            {product.discount > 0 && (
+                 <p className="text-xl text-gray-400 line-through decoration-gray-400/50">₹{product.price}</p>
+            )}
+          </div>
+
+          {/* Description */}
+          <p className="text-gray-600 text-base leading-relaxed mb-6">
+            {product.description || "Experience holistic vision care with our premium eyewear collection. Designed for those who value both style and substance."}
           </p>
 
-          <div className="flex items-center gap-2 mb-4">
-            <Star className="text-yellow-400 fill-yellow-400" size={20} />
-            <Star className="text-yellow-400 fill-yellow-400" size={20} />
-            <Star className="text-yellow-400 fill-yellow-400" size={20} />
-            <Star className="text-yellow-400 fill-yellow-400" size={20} />
-            <Star className="text-gray-300" size={20} />
-            <span className="text-sm text-gray-500">(4.0)</span>
-          </div>
+          <hr className="border-gray-100 mb-6"/>
 
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl mb-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-4xl font-bold text-gray-900">₹{discountedPrice}</p>
-                <p className="text-gray-400 line-through text-sm">₹{product.price}</p>
-              </div>
-              <span className="bg-red-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
-                {product.discount}% OFF
-              </span>
-            </div>
-          </div>
+          {/* Specs Grid */}
+          <ProductSpecs product={product} />
 
-          <ul className="text-sm text-gray-700 space-y-2 mb-6">
-            <li><b>Frame Type:</b> {product.frameType}</li>
-            <li><b>Frame Shape:</b> {product.frameShape}</li>
-            <li><b>Color:</b> {product.frameColor}</li>
-            <li><b>Size:</b> {product.frameSize}</li>
-          </ul>
+          {/* Trust Badges */}
+          <div className="flex items-center gap-6 my-8 text-sm text-gray-500">
+             <div className="flex items-center gap-2">
+                 <Truck size={18} className="text-blue-600"/> <span>Fast Delivery</span>
+             </div>
+             <div className="flex items-center gap-2">
+                 <ShieldCheck size={18} className="text-blue-600"/> <span>1 Year Warranty</span>
+             </div>
+             <div className="flex items-center gap-2">
+                 <RefreshCcw size={18} className="text-blue-600"/> <span>7 Day Returns</span>
+             </div>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        {/* Actions */}
+        <div className="mt-auto flex flex-col sm:flex-row gap-4 pt-6 text-lg">
           <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onBuyNowClick(false)}
-            className="w-full cursor-pointer rounded-xl bg-gray-900 py-3 text-white font-semibold hover:bg-black transition-all"
+            whileTap={{ scale: 0.98 }}
+            disabled={isOutOfStock}
+            onClick={() => onBuyNowClick(true)}
+            className={`flex-1 px-8 py-4 border-2 font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 ${
+                isOutOfStock 
+                ? "bg-gray-100 border-gray-100 text-gray-400 cursor-not-allowed" 
+                : "bg-white border-black text-black hover:bg-gray-50"
+            }`}
           >
-            Buy Now
+             <ShoppingCart size={20} /> {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </motion.button>
 
           <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onBuyNowClick(true)}
-            className="w-full cursor-pointer rounded-xl bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
-          >
-            <ShoppingCart size={18} /> Add to Cart
-          </motion.button>
+             whileTap={{ scale: 0.98 }}
+             disabled={isOutOfStock}
+             onClick={() => onBuyNowClick(false)}
+             className={`flex-[1.5] px-8 py-4 font-bold rounded-2xl shadow-xl transition-all ${
+                isOutOfStock
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                : "bg-black text-white hover:bg-gray-900 hover:shadow-2xl"
+             }`}
+           >
+             {isOutOfStock ? "Unavailable" : "Buy Now (Select Lenses)"}
+           </motion.button>
         </div>
       </div>
     );
@@ -180,38 +269,6 @@ const ProductInformation = memo(
 );
 ProductInformation.displayName = "ProductInformation";
 
-const ProductDetailsSection = memo(({ product }: { product: IProduct }) => {
-  const [showAll, setShowAll] = useState(false);
-  const details = useMemo(() => {
-    const excluded = ["_id", "images", "createdAt", "updatedAt", "__v", "price", "discount"];
-    return Object.entries(product).filter(([key]) => !excluded.includes(key));
-  }, [product]);
-
-  return (
-    <section className="mt-10 bg-white shadow rounded-2xl p-6">
-      <h3 className="text-2xl font-semibold border-b pb-3 mb-4">Product Details</h3>
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {(showAll ? details : details.slice(0, 6)).map(([key, value]) => (
-          <div key={key} className="border rounded-xl p-3 hover:shadow-sm transition">
-            <p className="text-xs text-gray-500 uppercase">{key}</p>
-            <p className="text-gray-800 font-semibold capitalize">{String(value)}</p>
-          </div>
-        ))}
-      </div>
-      {details.length > 6 && (
-        <div className="text-center mt-4">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="text-blue-600 text-sm font-medium hover:underline"
-          >
-            {showAll ? "Show Less" : "Show More Details"}
-          </button>
-        </div>
-      )}
-    </section>
-  );
-});
-ProductDetailsSection.displayName = "ProductDetailsSection";
 
 export default function ExploreProductPage() {
   const params = useParams();
@@ -219,29 +276,38 @@ export default function ExploreProductPage() {
   const [isLensSelectorOpen, setLensSelectorOpen] = useState(false);
   const [addToCart, setAddToCart] = useState(true);
 
-  if (loading) return <Loading />;
+  if (loading) return <SkeletonLoader />;
   if (error || !product) return <ErrorDisplay message={error || "Product not found"} />;
 
   return (
     <>
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-10">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-5 gap-6 bg-white rounded-3xl shadow-md overflow-hidden">
-            <div className="lg:col-span-3">
-              <ProductImageGallery images={product.images} />
+      <main className="min-h-screen bg-white pb-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-10 lg:py-16">
+            
+            {/* Breadcrumb - Optional */}
+            <div className="text-sm font-medium text-gray-500 mb-8 flex items-center gap-2">
+                <Link href="/" className="hover:text-black">Home</Link> / 
+                <Link href="/products" className="hover:text-black">Explore</Link> / 
+                <span className="text-black">{product.brandName}</span>
             </div>
-            <div className="lg:col-span-2 border-t lg:border-t-0 lg:border-l">
-              <ProductInformation
-                product={product}
-                onBuyNowClick={(isAdd) => {
-                  setAddToCart(isAdd);
-                  setLensSelectorOpen(true);
-                }}
-              />
-            </div>
-          </div>
 
-          <ProductDetailsSection product={product} />
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+                {/* Left: Gallery */}
+                <div className="relative">
+                     <ProductImageGallery images={product.images} />
+                </div>
+
+                {/* Right: Info */}
+                <div className="relative">
+                    <ProductInformation
+                        product={product}
+                        onBuyNowClick={(isAdd) => {
+                            setAddToCart(isAdd);
+                            setLensSelectorOpen(true);
+                        }}
+                    />
+                </div>
+            </div>
         </div>
       </main>
 

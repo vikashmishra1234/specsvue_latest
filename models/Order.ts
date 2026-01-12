@@ -52,6 +52,11 @@ export interface IOrder extends Document {
   paymentMethod?: "razorpay" | "cod" | "card" | "upi";
   razorpay_payment_id?: string;
   paymentStatus: "pending" | "paid";
+  
+  // Refund Details
+  refundId?: string;
+  refundStatus?: "pending" | "completed" | "failed";
+
   orderStatus: "processing" | "shipped" | "delivered" | "cancelled" | "Requested Cancellation";
   delivery?: {
     courierName?: string;
@@ -141,6 +146,10 @@ const OrderSchema = new Schema<IOrder>(
     },
     razorpay_payment_id: String,
     paymentStatus: { type: String, enum: ["pending", "paid"], default: "pending" },
+    
+    // Refund Details
+    refundId: String,
+    refundStatus: { type: String, enum: ["pending", "completed", "failed"] },
 
     orderStatus: {
       type: String,

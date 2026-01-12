@@ -1,7 +1,7 @@
-
 import Image from "next/image";
 import React from "react";
 import RemoveProductFromCartButton from "./RemoveProductFromCartButton";
+import { Info } from "lucide-react";
 
 const CartCard: React.FC<any> = ({session, data,setChange }) => {
   const {
@@ -17,54 +17,73 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
 
 
   return (
-    <div className="flex flex-row md:flex-row justify-between gap-5 p-5 rounded-2xl shadow-md bg-white w-full max-w-4xl hover:shadow-lg transition">
+    <div className="flex flex-col sm:flex-row gap-6 p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Product Image */}
-      <div className="w-[100px] md:w-[200px] flex-shrink-0">
+      <div className="w-full sm:w-[160px] flex-shrink-0 bg-gray-50 rounded-xl p-4 flex items-center justify-center">
         <Image
           src={productId.images?.[0] || "/placeholder.jpg"}
           alt="product"
           height={200}
           width={200}
-          className="rounded-xl object-contain w-full h-auto"
+          className="object-contain w-full h-auto mix-blend-multiply"
         />
       </div>
 
       {/* Details */}
-      <div className="flex flex-col justify-between w-full space-y-3">
-        <div className="space-y-2">
-          <h3 className="text-sm md:text-xl font-semibold text-gray-800 capitalize">
-            {productId.frameColor} {productId.frameMaterial} {productId.frameType}{" "}
-            {productId.frameShape} {productId.collection} {productId.brandName}{" "}
-            {productId.modelNumber}
-          </h3>
+      <div className="flex flex-col justify-between flex-1">
+        <div>
+           <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 capitalize leading-tight">
+                    {productId.brandName} {productId.modelNumber}
+                </h3>
+                <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-md font-medium whitespace-nowrap ml-2">
+                    {productId.frameType}
+                </span>
+           </div>
+           
+           <p className="text-gray-500 text-sm mb-4 line-clamp-1">
+             {productId.frameColor} • {productId.frameShape} • {productId.frameMaterial}
+           </p>
 
-          <p className="text-sm text-gray-500">Lens: {lensName}</p>
-
-          <div className="text-sm text-gray-600 space-y-1">
-            <div className="flex justify-between">
-              <span>Frame Price:</span>
-              <span>₹{framePrice}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Lens Price:</span>
-              <span>₹{lensPrice}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Quantity:</span>
-              <span>{quantity}</span>
-            </div>
-          </div>
-
-          <div className="flex justify-between font-semibold text-gray-800 border-t pt-2 mt-2">
-            <span>Final Total:</span>
-            <span>₹{finalPrice}</span>
-          </div>
+           {/* Pricing Breakdown */}
+           <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
+                <div className="flex justify-between text-gray-600">
+                    <span className="flex items-center gap-1.5"><Info size={14}/> Frame Base Price</span>
+                    <span>₹{framePrice}</span>
+                </div>
+                {lensName && (
+                    <div className="flex justify-between text-gray-600">
+                        <span className="flex items-center gap-1.5"><Info size={14}/> Lens ({lensName})</span>
+                        <span>+ ₹{lensPrice}</span>
+                    </div>
+                )}
+                <div className="flex justify-between text-gray-900 font-medium pt-2 border-t border-gray-200">
+                    <span>Price per unit</span>
+                    <span>₹{price}</span>
+                </div>
+           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-3 md:pt-4 justify-between">
-          <h4>Stock: {data.productId.stock}</h4>
-        <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-4">
+                 <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>Qty:</span>
+                    <span className="font-semibold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">{quantity}</span>
+                 </div>
+                 <div className="text-lg font-bold text-gray-900">
+                    ₹{finalPrice}
+                 </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+                {productId.stock !== undefined && (
+                   <span className={`text-xs font-medium ${Number(productId.stock) > 0 ? "text-green-600" : "text-red-500"}`}>
+                       {Number(productId.stock) > 0 ? "In Stock" : "Out of Stock"}
+                   </span>
+                )}
+                <RemoveProductFromCartButton setChange={setChange} data={data} userId={userId}/>
+            </div>
         </div>
       </div>
     </div>

@@ -29,7 +29,7 @@ async function generatePDFBill(user: any, orders: any[], transactionId: string, 
   });
   page.drawText("GSTIN: 29ABCDE1234F1Z5", { x: 400, y, size: 10, font });
   y -= 15;
-  page.drawText("Email: specsvue@gmail.com | Phone: +91 8630111264", {
+  page.drawText(`Email: ${process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'specsvue@gmail.com'} | Phone: +91 8630111264`, {
     x: 50,
     y,
     size: 10,
