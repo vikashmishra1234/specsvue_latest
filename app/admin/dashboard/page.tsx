@@ -1,6 +1,7 @@
-'use client'
+'use client'; 
 import { useEffect, useState } from 'react';
 import Overview from './Overview';
+import Sidebar from './Sidebar';
 import getAllOrders from '@/actions/GetAllOrders';
 import getAllProducts from '@/actions/getAllProducts';
 import Product from './Products';
@@ -32,19 +33,18 @@ localStorage.setItem(
     (async () => {
       try {
         setLoading(true);
-        const [ordersRes, productsData, usersData] = await Promise.all([
-          getAllOrders({ limit: 5 }), // Fetch first 5 for overview/initial
-          getAllProducts(),
+        const [ordersRes, productsRes, usersData] = await Promise.all([
+          getAllOrders({ limit: 5 }), 
+          getAllProducts({ limit: 12 }), // Fetch first 12 products
           getAllUsers()
         ]);
-
         
         setUsers(usersData?.data || []);
-        // ordersRes is now the object { success, data, pagination }
         setOrders(ordersRes?.data || []);
         setTotalOrders(ordersRes?.pagination?.totalOrders || 0);
 
-        setProducts(productsData?.data || []);
+        // productsRes is now the object { success, data, pagination }
+        setProducts(productsRes?.data || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -69,27 +69,34 @@ localStorage.setItem(
   }
 
   return (
-     <>
-      <AdminHeader setShowThis={setShowThis} />
-    <main className="flex  w-full bg-gray-50">
-      <div className="flex-1 ">
-        {showThis === 0 && (
-          <Overview 
-            users={users?.length || 0} 
-            productsLength={products?.length || 0} 
-            orders={orders} 
-            totalOrders={totalOrders}
-          />
-        )}
-       <div className='px-5'>
-         {showThis===1&&<Orders initialOrders={orders} />}
-       </div>
-        {showThis === 2 && <Product setChange={setChange} products={products} change={change} />}
-        {showThis === 5 && <ContactLensList />}
-        {showThis === 3 && <Priscription  />}
-        {showThis === 4 && <AdminSettings  />}
+    <div className="flex bg-gray-50 min-h-screen">
+      {/* Sidebar - Hidden on mobile, handled by desktop style */}
+      <Sidebar showThis={showThis} setShowThis={setShowThis} />
+      
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col md:ml-64 transition-all duration-300">
+        <AdminHeader setShowThis={setShowThis} />
+        
+        <main className="flex-1 overflow-x-hidden">
+          {showThis === 0 && (
+            <Overview 
+              users={users?.length || 0} 
+              productsLength={products?.length || 0} 
+              orders={orders} 
+              totalOrders={totalOrders}
+              onViewOrders={() => setShowThis(1)}
+            />
+          )}
+
+          <div className='px-4 sm:px-6 lg:px-8 py-6'>
+            {showThis === 1 && <Orders initialOrders={orders} />}
+            {showThis === 2 && <Product initialProducts={products} />}
+            {showThis === 5 && <ContactLensList />}
+            {showThis === 3 && <Priscription  />}
+            {showThis === 4 && <AdminSettings  />}
+          </div>
+        </main>
       </div>
-    </main>
-     </>
+    </div>
   );
 }

@@ -115,12 +115,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-bold text-gray-800">
-              ₹{Number(price)}
-            </span>
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-bold text-gray-800">
+                ₹{discount > 0 ? (Number(price) - (Number(price) * discount) / 100).toFixed(0) : Number(price)}
+              </span>
+              {discount > 0 && (
+                <span className="text-xs text-gray-400 line-through">
+                  ₹{Number(price)}
+                </span>
+              )}
+            </div>
            <MoveRight  onClick={() => router.push(`/explore/${productId}`)} cursor={'pointer'} />
           </div>
-
         
       </div>
     </div>

@@ -5,6 +5,39 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { X } from 'lucide-react'
 
+interface ProductType {
+  _id: string;
+  brandName: string;
+  collection: string;
+  frameType: string;
+  frameShape: string;
+  gender: string;
+  frameColor: string;
+  stock: number;
+  price: number;
+  discount: string;
+  modelNumber: string;
+  condition: string;
+  frameSize: string;
+  frameMaterial: string;
+  frameStyle: string;
+  frameWidth: string;
+  height: string;
+  prescriptionType: string;
+  productWarranty: string;
+  weight: string;
+  templeColor: string;
+  images: string[];
+  productType?: string;
+  frameDimensions?: string;
+  weightGroup?: string;
+  templeMaterial?: string;
+  frameStyleSecondary?: string;
+  createdAt: string;
+  updatedAt: string;
+  material?: string;
+}
+
 interface ProductEditFormProps {
   setShowUpdateForm: (value: boolean) => void
   productToBeUpdate: ProductType
@@ -90,7 +123,8 @@ export default function ProductEditForm({
     try {
       const data = new FormData()
       for (const key in formData) {
-        data.append(key, formData[key as keyof typeof formData])
+        const value = formData[key as keyof typeof formData];
+        data.append(key, value !== undefined && value !== null ? String(value) : '');
       }
       data.append('_id', productToBeUpdate._id)
 

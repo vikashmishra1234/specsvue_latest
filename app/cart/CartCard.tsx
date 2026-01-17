@@ -10,7 +10,9 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
     quantity,
     productId,
   } = data;
-  const framePrice = parseFloat(productId.price);
+  const originalFramePrice = parseFloat(productId.price);
+  const discount = parseFloat(productId.discount) || 0;
+  const framePrice = originalFramePrice - (originalFramePrice * discount) / 100;
   const lensPrice = price - framePrice;
   const finalPrice = price * quantity;
   const userId = session?.user.userId || localStorage.getItem('guestId') as string;
@@ -48,18 +50,24 @@ const CartCard: React.FC<any> = ({session, data,setChange }) => {
            {/* Pricing Breakdown */}
            <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
                 <div className="flex justify-between text-gray-600">
-                    <span className="flex items-center gap-1.5"><Info size={14}/> Frame Base Price</span>
-                    <span>₹{framePrice}</span>
+                    <span className="flex items-center gap-1.5">
+                        <Info size={14}/> Frame Base Price
+                        {discount > 0 && <span className="text-xs text-green-600">({discount}% Off)</span>}
+                    </span>
+                    <div className="flex flex-col items-end">
+                        <span>₹{framePrice.toFixed(2)}</span>
+                        {discount > 0 && <span className="text-xs text-gray-400 line-through">₹{originalFramePrice.toFixed(2)}</span>}
+                    </div>
                 </div>
                 {lensName && (
                     <div className="flex justify-between text-gray-600">
                         <span className="flex items-center gap-1.5"><Info size={14}/> Lens ({lensName})</span>
-                        <span>+ ₹{lensPrice}</span>
+                        <span>+ ₹{lensPrice.toFixed(2)}</span>
                     </div>
                 )}
                 <div className="flex justify-between text-gray-900 font-medium pt-2 border-t border-gray-200">
                     <span>Price per unit</span>
-                    <span>₹{price}</span>
+                    <span>₹{price.toFixed(2)}</span>
                 </div>
            </div>
         </div>

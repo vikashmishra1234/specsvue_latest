@@ -17,7 +17,7 @@ const ContactLensPage = () => {
        {/* Hero Banner */}
        <div className="relative w-full h-[250px] md:h-[400px] overflow-hidden">
             <Image 
-                src="https://images.unsplash.com/photo-1596489345090-5034c540960a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" // Placeholder or use the generated one if copied
+                src="/images/contact_Lenses.avif" // Placeholder or use the generated one if copied
                 alt="Contact Lens Banner" 
                 fill
                 className="object-cover"

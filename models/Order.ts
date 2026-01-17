@@ -149,7 +149,7 @@ const OrderSchema = new Schema<IOrder>(
     
     // Refund Details
     refundId: String,
-    refundStatus: { type: String, enum: ["pending", "completed", "failed"] },
+    refundStatus: { type: String, enum: ["pending", "initiated", "processed", "failed"] },
 
     orderStatus: {
       type: String,

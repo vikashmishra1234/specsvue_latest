@@ -27,6 +27,7 @@ async function getTrendingProducts() {
             brandName: p.brandName,
             modelNumber: p.modelNumber,
             price: p.price,
+            discount: p.discount,
             type: 'Frame' as const
         }));
         
@@ -35,6 +36,7 @@ async function getTrendingProducts() {
             images: p.images,
             name: p.name,
             price: p.price,
+            discount: 0, // Contact lenses logic might differ, setting 0 for now or p.discount if exists
             type: 'ContactLens' as const
         }));
 

@@ -14,6 +14,7 @@ interface Product {
     modelNumber?: string;
     name?: string; // For lenses
     price: number;
+    discount?: number;
     type: 'Frame' | 'ContactLens';
 }
 
@@ -51,6 +52,11 @@ const TrendingProducts = ({ products }: { products: Product[] }) => {
                                 <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-xs font-bold shadow-sm flex items-center gap-1 z-10">
                                     4.5 <Star size={10} className="fill-yellow-400 text-yellow-400"/>
                                 </div>
+                                {product.discount ? (
+                                    <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm z-10">
+                                        {product.discount}% OFF
+                                    </div>
+                                ) : null}
                             </div>
 
                             <div className="space-y-1">
@@ -61,7 +67,17 @@ const TrendingProducts = ({ products }: { products: Product[] }) => {
                                     {product.type === 'ContactLens' ? product.name : `${product.brandName} ${product.modelNumber}`}
                                 </h3>
                                 <div className="flex items-center justify-between pt-2">
-                                    <span className="text-lg font-bold text-gray-900">₹{product.price}</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-lg font-bold text-gray-900">
+                                            ₹
+                                            {product.discount
+                                                ? (product.price - (product.price * product.discount) / 100).toFixed(0)
+                                                : product.price}
+                                        </span>
+                                        {product.discount ? (
+                                            <span className="text-xs text-gray-400 line-through">₹{product.price}</span>
+                                        ) : null}
+                                    </div>
                                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
                                         <ArrowRight size={16}/>
                                     </div>

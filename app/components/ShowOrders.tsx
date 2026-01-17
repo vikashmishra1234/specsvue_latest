@@ -248,6 +248,40 @@ export default function ShowOrders({ isAdmin, order, isCancell }: ShowOrdersProp
                                      <AlertCircle size={16} /> Cancellation Requested
                                  </div>
                              )}
+                             
+                             {/* Refund Status Messages */}
+                             {orderData.refundStatus === "initiated" && (
+                                <div className="mt-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-md text-sm border border-blue-100">
+                                    <p className="font-bold flex items-center gap-2">
+                                        <AlertCircle size={16}/> Refund Initiated
+                                    </p>
+                                    <p className="mt-1 ml-6 text-xs">
+                                        Amount will be credited to your source account within {orderData.paymentMethod === 'upi' ? '24-48 hours' : '5-7 business days'}.
+                                    </p>
+                                </div>
+                             )}
+                             
+                             {orderData.refundStatus === "processed" && (
+                                <div className="mt-3 bg-green-50 text-green-700 px-4 py-3 rounded-md text-sm border border-green-100">
+                                    <p className="font-bold flex items-center gap-2">
+                                        <CheckCircle2 size={16}/> Refund Successful
+                                    </p>
+                                    <p className="mt-1 ml-6 text-xs">
+                                       Refund processed. Amount will be credited shortly.
+                                    </p>
+                                </div>
+                             )}
+                             
+                             {orderData.refundStatus === "failed" && (
+                                <div className="mt-3 bg-red-50 text-red-700 px-4 py-3 rounded-md text-sm border border-red-100">
+                                    <p className="font-bold flex items-center gap-2">
+                                        <XCircle size={16}/> Refund Failed
+                                    </p>
+                                    <p className="mt-1 ml-6 text-xs">
+                                        Refund process failed. Please contact our support team.
+                                    </p>
+                                </div>
+                             )}
                         </>
                     )}
                </div>

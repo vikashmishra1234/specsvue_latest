@@ -164,10 +164,10 @@ export async function PUT(req: NextRequest) {
 
              if (refund && refund.id) {
                  order.refundId = refund.id;
-                 order.refundStatus = 'completed';
-                 refundMessage = ". Refund initiated successfully.";
+                 order.refundStatus = 'initiated';
+                 refundMessage = ". Refund initiated successfully. Please check status shortly.";
                  order.statusHistory.push({
-                    status: "refunded",
+                    status: "refund_initiated",
                     updatedAt: new Date(),
                     comment: `Refund ID: ${refund.id}`
                  });

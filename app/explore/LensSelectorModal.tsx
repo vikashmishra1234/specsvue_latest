@@ -54,7 +54,10 @@ const LensSelectorModal = memo(
         try {
           setLoading(true);
           const framePrice = Number(product.price) || 0;
-          const total = lens.price + framePrice;
+          const discount = product.discount || 0;
+          const discountedFramePrice = framePrice - (framePrice * discount) / 100;
+          
+          const total = lens.price + discountedFramePrice;
 
           const userId = session
             ? session.user.userId
@@ -103,6 +106,10 @@ const LensSelectorModal = memo(
       },
       [product, session, router]
     );
+
+    const framePrice = Number(product.price) || 0;
+    const discount = product.discount || 0;
+    const discountedFramePrice = framePrice - (framePrice * discount) / 100;
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-sm">
@@ -202,8 +209,11 @@ const LensSelectorModal = memo(
 
             {/* Frame Price */}
             <div className="mt-8 flex justify-between rounded-xl bg-gray-100 p-4 text-lg font-bold text-gray-800">
-              <span>Frame Price:</span>
-              <span>₹{Number(product.price).toFixed(2)}</span>
+              <span className="flex flex-col">
+                  <span>Frame Price:</span>
+                  {discount > 0 && <span className="text-xs font-normal text-gray-500 line-through">₹{framePrice.toFixed(2)}</span>}
+              </span>
+              <span>₹{discountedFramePrice.toFixed(2)}</span>
             </div>
           </div>
         </motion.div>
