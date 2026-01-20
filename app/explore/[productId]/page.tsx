@@ -73,8 +73,8 @@ const SkeletonLoader = () => (
     
     {/* Desktop Skeleton */}
     <div className="hidden lg:block max-w-7xl mx-auto px-8 py-16 animate-pulse">
-      <div className="grid lg:grid-cols-2 gap-20">
-        <div className="h-[600px] bg-gray-200 rounded-3xl"></div>
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="aspect-square w-full bg-gray-200 rounded-3xl"></div>
         <div className="space-y-6">
           <div className="h-12 bg-gray-200 rounded w-3/4"></div>
           <div className="h-8 bg-gray-200 rounded w-1/2"></div>
@@ -253,10 +253,12 @@ const DesktopProductInfo = memo(({
     (Number(product.price) * product.discount) / 100
   ).toFixed(0);
 
+  const savings = Number(product.price) - Number(discountedPrice);
+
   const isOutOfStock = (product.stock || 0) <= 0;
 
   return (
-    <div className="flex flex-col h-full pl-10 pt-10">
+    <div className="flex flex-col h-full pl-0 lg:pl-12 pt-0">
       <div>
         <div className="mb-2 flex items-center gap-2">
           <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full uppercase tracking-wider">
@@ -274,7 +276,7 @@ const DesktopProductInfo = memo(({
           )}
         </div>
 
-        <h1 className="text-5xl font-bold font-serif text-gray-900 mb-4 capitalize tracking-tight leading-tight">
+        <h1 className="text-3xl lg:text-4xl font-bold font-serif text-gray-900 mb-4 capitalize tracking-tight leading-tight">
           {product.brandName || "SpecsVue Original"}
         </h1>
         
@@ -287,20 +289,29 @@ const DesktopProductInfo = memo(({
           <span className="text-sm text-gray-500 font-medium">4.8 (120 reviews)</span>
         </div>
 
-        <div className="flex items-baseline gap-4 mb-8">
-          <p className="text-5xl font-bold font-serif text-gray-900">₹{discountedPrice}</p>
+        <div className="flex items-center gap-4 mb-8">
+          <p className="text-3xl lg:text-4xl font-bold font-serif text-gray-900">₹{discountedPrice}</p>
           {product.discount > 0 && (
-            <p className="text-xl text-gray-400 line-through decoration-gray-400/50">₹{product.price}</p>
+            <>
+              <p className="text-xl text-gray-400 line-through decoration-gray-400/50">₹{product.price}</p>
+              <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-bold rounded-full">
+                Save ₹{savings}
+              </span>
+            </>
           )}
         </div>
 
-        <p className="text-gray-600 text-base leading-relaxed mb-6">
-          {product.description || "Experience holistic vision care with our premium eyewear collection. Designed for those who value both style and substance."}
-        </p>
+        <div className="space-y-4 mb-8">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Description</h3>
+            <p className="text-gray-600 text-base leading-relaxed">
+              {product.description || "Experience holistic vision care with our premium eyewear collection. Designed for those who value both style and substance."}
+            </p>
+        </div>
 
-        <hr className="border-gray-100 mb-6"/>
-
-        <ProductSpecs product={product} />
+        <div className="space-y-4">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest border-b border-gray-100 pb-2">Specifications</h3>
+            <ProductSpecs product={product} />
+        </div>
 
         <div className="flex flex-wrap items-center gap-6 my-8 text-sm text-gray-500">
           <div className="flex items-center gap-2">
@@ -541,7 +552,7 @@ export default function ExploreProductPage() {
             <span className="text-black">{product.brandName}</span>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-20">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             <DesktopImageGallery images={product.images} />
             <DesktopProductInfo
               product={product}
