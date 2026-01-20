@@ -45,7 +45,7 @@ const FooterContact = () => {
   return (
     <div className="bg-black text-white">
       {/* --- CONTACT SECTION --- */}
-      <section id="contact" className="py-20 border-b border-gray-800">
+      <section id="contact" className="py-10 sm:py-20 border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             
@@ -184,19 +184,19 @@ const FooterContact = () => {
       </section>
 
       {/* --- FOOTER SECTION --- */}
-      <footer className="py-16 pt-20">
+      <footer className="py-10 md:py-16 pt-12 md:pt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                  <div className="col-span-2 md:col-span-1">
-                      <h4 className="text-xl font-bold text-white mb-6">Specsvue</h4>
-                      <p className="text-gray-500 text-sm leading-relaxed mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 md:mb-12">
+                  <div className="col-span-1 sm:col-span-2 md:col-span-1">
+                      <h4 className="text-lg md:text-xl font-bold font-serif text-white mb-4 md:mb-6">Specsvue</h4>
+                      <p className="text-gray-500 text-sm leading-relaxed mb-4 md:mb-6">
                           Redefining eyewear with premium frames and advanced lens technology. Style meets clarity.
                       </p>
                   </div>
                   
                   <div>
-                      <h4 className="text-lg font-bold text-white mb-6">Shop</h4>
-                      <ul className="space-y-4 text-sm text-gray-500">
+                      <h4 className="text-base md:text-lg font-bold font-serif text-white mb-4 md:mb-6">Shop</h4>
+                      <ul className="space-y-3 md:space-y-4 text-sm text-gray-500">
                           <li><Link href="/products" className="hover:text-white transition-colors">Eyeglasses</Link></li>
                           <li><Link href="/products" className="hover:text-white transition-colors">Sunglasses</Link></li>
                           <li><Link href="/contact-lenses" className="hover:text-white transition-colors">Contact Lenses</Link></li>
@@ -205,8 +205,8 @@ const FooterContact = () => {
                   </div>
 
                   <div>
-                      <h4 className="text-lg font-bold text-white mb-6">Company</h4>
-                      <ul className="space-y-4 text-sm text-gray-500">
+                      <h4 className="text-base md:text-lg font-bold font-serif text-white mb-4 md:mb-6">Company</h4>
+                      <ul className="space-y-3 md:space-y-4 text-sm text-gray-500">
                           <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                           <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
                           <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
@@ -215,8 +215,8 @@ const FooterContact = () => {
                   </div>
 
                   <div>
-                      <h4 className="text-lg font-bold text-white mb-6">Support</h4>
-                      <ul className="space-y-4 text-sm text-gray-500">
+                      <h4 className="text-base md:text-lg font-bold font-serif text-white mb-4 md:mb-6">Support</h4>
+                      <ul className="space-y-3 md:space-y-4 text-sm text-gray-500">
                           <li><Link href="/faq" className="hover:text-white transition-colors">FAQs</Link></li>
                           <li><Link href="/shipping" className="hover:text-white transition-colors">Shipping Policy</Link></li>
                           <li><Link href="/returns" className="hover:text-white transition-colors">Returns & Refunds</Link></li>
@@ -225,11 +225,11 @@ const FooterContact = () => {
                   </div>
               </div>
               
-              <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                  <p className="text-gray-600 text-sm">
+              <div className="border-t border-gray-800 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                  <p className="text-gray-600 text-xs md:text-sm text-center md:text-left">
                       &copy; {new Date().getFullYear()} Specsvue. All rights reserved.
                   </p>
-                  <div className="flex gap-6 text-sm text-gray-600">
+                  <div className="flex gap-6 text-xs md:text-sm text-gray-600">
                       <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
                       <Link href="/terms" className="hover:text-white">Terms of Use</Link>
                   </div>

@@ -22,24 +22,24 @@ const TrendingProducts = ({ products }: { products: Product[] }) => {
     if (!products || products.length === 0) return null;
 
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="py-12 md:py-16 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-end mb-10">
+                <div className="flex justify-between items-end mb-6 md:mb-10">
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Trending Now</h2>
-                        <p className="text-gray-500">Top picks for this season</p>
+                        <h2 className="text-2xl md:text-3xl font-bold font-serif text-gray-900 mb-1 md:mb-2">Trending Now</h2>
+                        <p className="text-sm md:text-base text-gray-500">Top picks for this season</p>
                     </div>
                     <Link href="/products" className="hidden sm:flex items-center gap-2 font-semibold text-black hover:text-gray-600 transition">
                         View All <ArrowRight size={18} />
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 md:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {products.map((product) => (
                          <Link 
                             key={product._id} 
                             href={product.type === 'ContactLens' ? `/contact-lenses/${product._id}` : `/explore/${product._id}`}
-                            className="bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100"
+                            className="min-w-[240px] md:min-w-0 snap-center bg-white rounded-xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex-shrink-0"
                         >
                             <div className="relative aspect-square mb-4 bg-gray-100 rounded-lg overflow-hidden">
                                 <Image
@@ -63,7 +63,7 @@ const TrendingProducts = ({ products }: { products: Product[] }) => {
                                 <p className="text-sm text-gray-500 font-medium">
                                     {product.type === 'ContactLens' ? 'Contact Lens' : product.brandName}
                                 </p>
-                                <h3 className="font-bold text-gray-900 truncate">
+                                <h3 className="font-bold font-serif text-gray-900 truncate text-lg">
                                     {product.type === 'ContactLens' ? product.name : `${product.brandName} ${product.modelNumber}`}
                                 </h3>
                                 <div className="flex items-center justify-between pt-2">
@@ -86,9 +86,9 @@ const TrendingProducts = ({ products }: { products: Product[] }) => {
                         </Link>
                     ))}
                 </div>
-                 <div className="mt-8 text-center sm:hidden">
-                    <Link href="/products" className="inline-flex items-center gap-2 font-semibold text-black px-6 py-3 border border-gray-300 rounded-full hover:bg-gray-50">
-                        View All Products <ArrowRight size={18} />
+                 <div className="mt-4 md:mt-8 text-center sm:hidden">
+                    <Link href="/products" className="inline-flex items-center gap-2 font-semibold text-black px-6 py-3 border border-gray-300 rounded-full hover:bg-gray-50 text-sm">
+                        View All Products <ArrowRight size={16} />
                     </Link>
                  </div>
             </div>
