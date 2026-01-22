@@ -24,9 +24,8 @@ export async function placeOrder({
     await connectToDatabase();
     console.log(`[OrderService] ✅ DB Connected`);
     
-    // Ensure models are registered
-    await Product.init();
-    await ContactLens.init();
+    // REMOVED explicit .init() calls as they cause hangs in serverless environments
+    // Mongoose builds indexes in the background automatically.
   
     console.log(`[OrderService] Fetching Cart...`);
     const userCart: any = await Cart.findOne({ userId }).lean();
