@@ -38,21 +38,7 @@ export default async function UserLayout({
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          
-          {/* == Sidebar Navigation (Client Component) == */}
-          <div className="lg:col-span-3 xl:col-span-3 mb-8 lg:mb-0">
-            <UserDashboard user={currentUser} userId={userId} />
-          </div>
-
-          {/* == Main Content Area == */}
-          <main className="lg:col-span-9 xl:col-span-9">
-            <div className="bg-white p-1 md:p-6 sm:p-8 rounded-2xl shadow-sm min-h-[400px]">
-              {children}
-            </div>
-          </main>
-
-        </div>
+          {children}
       </div>
     </div>
   );

@@ -85,6 +85,7 @@ localStorage.setItem(
               orders={orders} 
               totalOrders={totalOrders}
               onViewOrders={() => setShowThis(1)}
+              onAddProduct={() => setShowThis(2)}
             />
           )}
 

@@ -7,37 +7,38 @@ import { ArrowLeft } from "lucide-react";
 
 interface AddContactLensFormProps {
     onBack: () => void;
+    initialData?: any;
 }
 
-export default function AddContactLensForm({ onBack }: AddContactLensFormProps) {
+export default function AddContactLensForm({ onBack, initialData }: AddContactLensFormProps) {
   const [formData, setFormData] = useState({
-    name: "",
-    brandName: "",
-    description: "",
-    price: "",
-    salePrice: "",
-    stock: "",
-    lensType: "Monthly",
-    material: "",
-    waterContent: "",
-    packSize: "",
-    powerMin: "-12.00",
-    powerMax: "6.00",
-    powerStep: "0.25",
-    isToric: false,
-    cylinderMin: "-2.25",
-    cylinderMax: "-0.75",
-    cylinderStep: "0.50",
-    axisMin: "10",
-    axisMax: "180",
-    axisStep: "10",
+    name: initialData?.name || "",
+    brandName: initialData?.brandName || "",
+    description: initialData?.description || "",
+    price: initialData?.price || "",
+    salePrice: initialData?.salePrice || "",
+    stock: initialData?.stock || "",
+    lensType: initialData?.lensType || "Monthly",
+    material: initialData?.material || "",
+    waterContent: initialData?.waterContent || "",
+    packSize: initialData?.packSize || "",
+    powerMin: initialData?.powerMin || "-12.00",
+    powerMax: initialData?.powerMax || "6.00",
+    powerStep: initialData?.powerStep || "0.25",
+    isToric: initialData?.isToric || false,
+    cylinderMin: initialData?.cylinderMin || "-2.25",
+    cylinderMax: initialData?.cylinderMax || "-0.75",
+    cylinderStep: initialData?.cylinderStep || "0.50",
+    axisMin: initialData?.axisMin || "10",
+    axisMax: initialData?.axisMax || "180",
+    axisStep: initialData?.axisStep || "10",
   });
 
   // Array fields handling (comma separated for input)
   const [arrayInputs, setArrayInputs] = useState({
-     baseCurve: "8.6",
-     diameter: "14.2",
-     colors: "",
+     baseCurve: initialData?.baseCurve?.join(", ") || "8.6",
+     diameter: initialData?.diameter?.join(", ") || "14.2",
+     colors: initialData?.colors?.join(", ") || "",
   });
 
   const [images, setImages] = useState<FileList | null>(null);
@@ -45,8 +46,8 @@ export default function AddContactLensForm({ onBack }: AddContactLensFormProps) 
   const [loading, setLoading] = useState(false);
   
   // Previews
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [featurePreviewUrls, setFeaturePreviewUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>(initialData?.images || []);
+  const [featurePreviewUrls, setFeaturePreviewUrls] = useState<string[]>(initialData?.featureImages || []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -100,23 +101,32 @@ export default function AddContactLensForm({ onBack }: AddContactLensFormProps) 
       if (featureImages) {
         Array.from(featureImages).forEach((file) => data.append("featureImages", file));
       }
-
-      const res = await axios.post("/api/admin/contact-lens", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      if (res?.data?.success) {
-        Swal.fire({
-          title: "Contact Lens Added!",
-          icon: "success",
-        });
-        // Optionally go back to list
-        onBack();
+      
+      if (initialData?._id) {
+          data.append("_id", initialData._id);
+          // PUT logic
+          const res = await axios.put("/api/admin/contact-lens", data, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          if (res?.data?.success) {
+            Swal.fire({ title: "Updated Successfully!", icon: "success" });
+            onBack();
+          }
+      } else {
+          // POST logic
+          const res = await axios.post("/api/admin/contact-lens", data, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          if (res?.data?.success) {
+            Swal.fire({ title: "Contact Lens Added!", icon: "success" });
+            onBack();
+          }
       }
+
     } catch (err: any) {
       Swal.fire({
         title: "Error",
-        text: err.response?.data?.error || "Failed to add product",
+        text: err.response?.data?.error || "Failed to save product",
         icon: "error",
       });
     } finally {
@@ -130,7 +140,7 @@ export default function AddContactLensForm({ onBack }: AddContactLensFormProps) 
           <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <ArrowLeft className="w-6 h-6 text-gray-600" />
           </button>
-          <h2 className="text-2xl font-bold">Add New Contact Lens</h2>
+          <h2 className="text-2xl font-bold">{initialData ? "Edit Contact Lens" : "Add New Contact Lens"}</h2>
       </div>
       
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">

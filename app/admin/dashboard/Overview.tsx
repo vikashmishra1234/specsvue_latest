@@ -16,9 +16,10 @@ interface OverviewProps {
   orders: any[];
   totalOrders: number;
   onViewOrders: () => void;
+  onAddProduct: () => void;
 }
 
-export default function Overview({ users, productsLength, orders, totalOrders, onViewOrders }: OverviewProps) {
+export default function Overview({ users, productsLength, orders, totalOrders, onViewOrders, onAddProduct }: OverviewProps) {
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -45,7 +46,10 @@ export default function Overview({ users, productsLength, orders, totalOrders, o
              <button className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 shadow-sm transition-all focus:ring-2 focus:ring-gray-200">
                 Download Report
              </button>
-             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-200 transition-all focus:ring-2 focus:ring-blue-500">
+             <button 
+                onClick={onAddProduct}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm shadow-blue-200 transition-all focus:ring-2 focus:ring-blue-500"
+             >
                 + Add Product
              </button>
           </div>
