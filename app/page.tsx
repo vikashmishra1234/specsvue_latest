@@ -6,7 +6,6 @@ import { connectToDatabase } from "@/lib/dbConnect";
 import Product from "@/models/Product";
 import ContactLens from "@/models/ContactLens";
 import FooterContact from "./components/Home/FooterContact";
-
 export const metadata: Metadata = {
   title: "Specsvue | Premium Eyewear & Contact Lenses",
   description: "Shop the latest collection of trendy eyeglasses, sunglasses, and contact lenses at Specsvue. Best prices and fast delivery.",

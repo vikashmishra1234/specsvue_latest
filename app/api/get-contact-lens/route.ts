@@ -8,6 +8,10 @@ const connectDB = async () => {
   await mongoose.connect(process.env.MONGODB_URI as string);
 };
 
+
+export const dynamic = 'force-dynamic';
+
+
 export async function GET(req: Request) {
   try {
     await connectDB();

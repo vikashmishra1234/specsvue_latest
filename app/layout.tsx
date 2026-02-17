@@ -4,6 +4,8 @@ import Header from "@/app/components/Header";
 import ReduxProvider from "./ReduxProvider";
 import SessionWrapper from "./SessionWrapper";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://specsvue.in"),
@@ -64,6 +66,7 @@ export default function RootLayout({
             <main>{children}</main>
             {/* <Footer /> */}
           </ReduxProvider>
+          <SpeedInsights/>
         </SessionWrapper>
       </body>
     </html>
