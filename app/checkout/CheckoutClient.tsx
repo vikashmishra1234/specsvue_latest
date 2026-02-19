@@ -6,6 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { handleCheckout } from "@/app/components/client-components/CheckOutButton";
+import Image from "next/image";
 
 interface CheckoutClientProps {
   initialCart: any;
@@ -46,21 +47,8 @@ export default function CheckoutClient({ initialCart, initialAddresses, userId, 
         const payload = { ...formData, email: userEmail, userId };
         const res = await axios.post("/api/add-address", payload);
         
-        // Optimistic update or refetch could work, but here we just append logic if API returns full object
-        // For simplicity, we assume successful return gives us the new address ID or list.
-        // The API actually returns success.
-        
-        // Re-fetching addresses or just hard reloading is safest to keep sync, 
-        // but let's try to update state locally if possible.
-        // Actually, let's just refresh the page data or just proceed.
-        
-        // Since API structure is slightly unknown in full detail without reading it again, 
-        // let's rely on a hard refresh or re-fetch. 
-        // We will just do a window.location.reload() for safety or assume it worked and select it.
-        // Better UX: Add to list.
-        
-        // Just reload for now to ensure ID is correct from DB
-        window.location.reload(); 
+        setIsAddingNew(false);
+        router.refresh();
         
     } catch (error) {
         setLoading(false);
@@ -159,10 +147,13 @@ export default function CheckoutClient({ initialCart, initialAddresses, userId, 
                 {initialCart.items.map((item: any) => (
                     <div key={item._id} className="p-4 flex gap-4">
                         <div className="w-20 h-20 bg-gray-50 rounded-lg border border-gray-100 p-2 flex-shrink-0">
-                            <img 
-                                src={item.productId?.images?.[0] || '/no-image.png'} 
-                                alt="Product" 
+                            <Image
+                                src={item.productId?.images?.[0] || '/no-image.png'}
+                                alt="Product"
+                                width={80}
+                                height={80}
                                 className="w-full h-full object-contain mix-blend-multiply"
+                                loading="lazy"
                             />
                         </div>
                         <div>

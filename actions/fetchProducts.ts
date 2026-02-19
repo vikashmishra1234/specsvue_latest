@@ -27,42 +27,38 @@ const [filters,setFilters] = useState<Filters>({
 })
 const [loading,setLoading] = useState<boolean>(false)
 const [error,setError] = useState<string>('');
+
     useEffect(() => {
-        const getData = async () => {
-          try {
-            setLoading(true)
-            const res = await axios.get(`/api/get-products?limit=${limit}&category=${productCategory}`)
-            setData(res.data.products)
-            return ;
-          } catch (error) {
-            setError('Something Went Wrong')
-            return error;
-          }
-          finally{
-            setLoading(false)
-          }
+      let mounted = true;
+
+      const getData = async () => {
+        try {
+          setLoading(true);
+          setError("");
+          const [productsRes, filtersRes] = await Promise.all([
+            axios.get(`/api/get-products?limit=${limit}&category=${productCategory}`),
+            axios.get('/api/get-filters')
+          ]);
+
+          if (!mounted) return;
+          setData(productsRes.data.products);
+          setFilters(filtersRes.data.filters);
+        } catch (error) {
+          if (!mounted) return;
+          setError("Something went wrong while loading products.");
+        } finally {
+          if (mounted) setLoading(false);
         }
-        limit&&getData()
-      }, [limit])
+      };
 
+      if (limit) {
+        getData();
+      }
 
-    // fetching filters
-    useEffect(()=>{
-        (async()=>{
-          try {
-            // setLoading(true)
-            const res = await axios.get('/api/get-filters');
-            setFilters(res.data.filters);
-            return;
-          } catch (error) {
-            setError("Error While Fetching Filters")
-            return error
-          }
-          finally{
-            // setLoading(false)
-          }
-        })()
-    },[])
+      return () => {
+        mounted = false;
+      };
+    }, [limit, productCategory]);
 
       return {data,error,loading,filters}
 }

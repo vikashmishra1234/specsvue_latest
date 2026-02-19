@@ -8,7 +8,6 @@ import { ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import getUserCart from "@/actions/getUserCart";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/store/cartSlice";
 
@@ -23,10 +22,9 @@ const navLinks = [
 ];
 
 const Header = () => {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   const dispatch = useDispatch<any>();
   const { products } = useSelector((state: any) => {
@@ -34,11 +32,11 @@ const Header = () => {
   });
   const [currentUserCart, setCurrentCart] = useState<any>(products);
   useEffect(() => {
-    const userId = session
-      ? session.user.userId
-      : localStorage.getItem("guestId");
-    dispatch(fetchProducts(userId as string));
-  }, [session, dispatch]);
+    const userId = session?.user?.userId || localStorage.getItem("guestId");
+    if (userId) {
+      dispatch(fetchProducts(userId));
+    }
+  }, [session?.user?.userId, dispatch]);
 
   useEffect(() => {
     setCurrentCart(products);

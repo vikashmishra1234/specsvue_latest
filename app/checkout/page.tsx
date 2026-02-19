@@ -33,20 +33,34 @@ export default async function CheckoutPage() {
 
   // Populate Cart Logic
   const populatedCart: any = cartRaw;
-  populatedCart.items = await Promise.all((cartRaw as any).items.map(async (item: any) => {
-    let populatedProduct: any = null;
-    if (item.productType === 'ContactLens') {
-        populatedProduct = await ContactLens.findById(item.productId).lean();
-    } else {
-        populatedProduct = await Product.findById(item.productId).lean();
-    }
-    // Safety check if product was deleted
-    if(!populatedProduct) return item; 
-    
-    // Convert _id to string to avoid serialization issues
-    populatedProduct._id = populatedProduct._id.toString();
-    return { ...item, productId: populatedProduct };
-  }));
+  const items = (cartRaw as any).items || [];
+
+  const frameProductIds = items
+    .filter((item: any) => item.productType !== "ContactLens")
+    .map((item: any) => item.productId);
+
+  const lensProductIds = items
+    .filter((item: any) => item.productType === "ContactLens")
+    .map((item: any) => item.productId);
+
+  const [frameProducts, lensProducts] = await Promise.all([
+    frameProductIds.length ? Product.find({ _id: { $in: frameProductIds } }).lean() : [],
+    lensProductIds.length ? ContactLens.find({ _id: { $in: lensProductIds } }).lean() : [],
+  ]);
+
+  const productMap = new Map<string, any>();
+  for (const product of frameProducts as any[]) {
+    productMap.set(product._id.toString(), { ...product, _id: product._id.toString() });
+  }
+  for (const lens of lensProducts as any[]) {
+    productMap.set(lens._id.toString(), { ...lens, _id: lens._id.toString() });
+  }
+
+  populatedCart.items = items.map((item: any) => {
+    const product = productMap.get(item.productId?.toString?.() || String(item.productId));
+    if (!product) return item;
+    return { ...item, productId: product };
+  });
   
   // Serialize Cart & Address for Client Component
   populatedCart._id = populatedCart._id.toString();

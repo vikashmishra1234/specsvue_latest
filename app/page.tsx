@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Shop the latest collection of trendy eyeglasses, sunglasses, and contact lenses at Specsvue. Best prices and fast delivery.",
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 async function getTrendingProducts() {
     try {
