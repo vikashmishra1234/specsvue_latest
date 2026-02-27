@@ -3,7 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import User from "@/models/User";
 import { connectToDatabase } from "@/lib/dbConnect";
-import bcrypt from 'bcryptjs';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -38,6 +37,7 @@ export const authOptions: NextAuthOptions = {
           // Clear OTP after successful login
           user.otp = undefined;
           user.otpExpiry = undefined;
+          user.isVerified = true;
           await user.save();
   
           return user;
@@ -55,18 +55,33 @@ export const authOptions: NextAuthOptions = {
         if (account?.provider === 'google') {
             try {
                 await connectToDatabase();
-                const existingUser = await User.findOne({ userId: profile?.sub });
+                const googleSub = profile?.sub;
+                const googleEmail = profile?.email;
+                let existingUser = await User.findOne({ userId: googleSub });
+
+                // Handle users who previously signed up with OTP using the same email.
+                if (!existingUser && googleEmail) {
+                  existingUser = await User.findOne({ email: googleEmail });
+                }
                 
                 if (!existingUser) {
                   const newUser = new User({
-                    userId: profile?.sub,
-                    email: profile?.email,
+                    userId: googleSub,
+                    email: googleEmail,
                     name: profile?.name,
                     picture: profile?.picture,
                     isVerified: profile?.email_verified,
                     token: account?.access_token,
                   });
                   await newUser.save();
+                } else {
+                  existingUser.userId = existingUser.userId || googleSub;
+                  existingUser.email = existingUser.email || googleEmail;
+                  existingUser.name = profile?.name || existingUser.name;
+                  existingUser.picture = profile?.picture || existingUser.picture;
+                  existingUser.isVerified = true;
+                  existingUser.token = account?.access_token || existingUser.token;
+                  await existingUser.save();
                 }
                 return true;
               } catch (err) {
@@ -79,10 +94,19 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account, profile }) {
       if (user) { 
         // user object is available only on sign in
-        token.userId = user.userId || (user as any)._id.toString(); // Map _id to userId for credentials provider
+        token.userId = user.userId || user.email || (user as any)._id.toString();
         token.email = user.email;
         token.name = user.name;
         token.picture = user.picture;
+      }
+      if (account?.provider === "google" && profile?.email) {
+        await connectToDatabase();
+        const userDoc = (await User.findOne({ email: profile.email })
+          .select("userId")
+          .lean()) as { userId?: string } | null;
+        if (userDoc?.userId) {
+          token.userId = userDoc.userId;
+        }
       }
       return token;
     },

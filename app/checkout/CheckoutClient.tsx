@@ -46,13 +46,28 @@ export default function CheckoutClient({ initialCart, initialAddresses, userId, 
         setLoading(true);
         const payload = { ...formData, email: userEmail, userId };
         const res = await axios.post("/api/add-address", payload);
-        
+        const savedAddress = res?.data?.data;
+
+        if (savedAddress?._id) {
+          setAddresses((prev) => [savedAddress, ...prev]);
+          setSelectedAddressId(savedAddress._id);
+        }
+
         setIsAddingNew(false);
-        router.refresh();
-        
+        setFormData({
+          pincode: "",
+          houseNumberOrBuildingName: "",
+          areaOrLocality: "",
+          landmark: "",
+          name: "",
+          phone: "",
+        });
+
+        Swal.fire({ title: "Address saved", icon: "success", timer: 1200, showConfirmButton: false });
     } catch (error) {
-        setLoading(false);
         Swal.fire({ title: "Error saving address", icon: "error" });
+    } finally {
+        setLoading(false);
     }
   };
 

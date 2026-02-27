@@ -2,7 +2,9 @@ import { connectToDatabase } from "@/lib/dbConnect";
 import Product from "@/models/Product";
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+const CACHE_HEADERS = {
+  "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
         .limit(safeLimit)
         .select(listFields)
         .lean();
-      return NextResponse.json({ products }, { status: 200 });
+      return NextResponse.json({ products }, { status: 200, headers: CACHE_HEADERS });
     }
     else{
       const products = await Product.find({productType:{$regex:productCategory,$options:"i"}})
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
         .limit(safeLimit)
         .select(listFields)
         .lean();
-      return NextResponse.json({ products }, { status: 200 });
+      return NextResponse.json({ products }, { status: 200, headers: CACHE_HEADERS });
     }
   } catch (error) {
     console.error("Error fetching products:", error);

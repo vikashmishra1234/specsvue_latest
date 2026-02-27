@@ -22,7 +22,6 @@ export async function POST(req: Request) {
       !pincode ||
       !houseNumberOrBuildingName ||
       !areaOrLocality ||
-      !landmark ||
       !name ||
       !phone ||
       !email ||
@@ -38,7 +37,7 @@ export async function POST(req: Request) {
       pincode,
       houseNumberOrBuildingName,
       areaOrLocality,
-      landmark,
+      landmark: landmark?.trim() || "none",
       name,
       phone,
       email,

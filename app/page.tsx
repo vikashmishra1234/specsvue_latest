@@ -18,8 +18,10 @@ async function getTrendingProducts() {
         await connectToDatabase();
         
         // Fetch 4 frames and 4 lenses for variety
-        const frames = await Product.find({}).sort({ createdAt: -1 }).limit(4).lean();
-        const lenses = await ContactLens.find({}).sort({ createdAt: -1 }).limit(4).lean();
+        const [frames, lenses] = await Promise.all([
+          Product.find({}).sort({ createdAt: -1 }).limit(4).lean(),
+          ContactLens.find({}).sort({ createdAt: -1 }).limit(4).lean(),
+        ]);
         
         // Transform for component
         const formattedFrames = frames.map((p: any) => ({

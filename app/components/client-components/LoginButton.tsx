@@ -26,6 +26,7 @@ const UserLogin = () => {
   const [step, setStep] = useState<"email" | "otp">("email");
   const [isSignUp, setIsSignUp] = useState(false); // Toggle state
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState("");
 
   const callbackUrl = searchParams.get("callbackUrl") || "/cart";
@@ -37,7 +38,7 @@ const UserLogin = () => {
         try {
             const data = {
                 guestId: localStorage.getItem("guestId"),
-                userId: session.user.userId as string,
+                userId: session?.user?.userId as string,
             };
             if(data.guestId && data.userId){
                  await axios.post('/api/update-userid', data);
@@ -48,7 +49,8 @@ const UserLogin = () => {
         }
         
         sessionStorage.removeItem("navigateAfterLogin");
-        router.push(callbackUrl);
+        setIsRedirecting(true);
+        router.replace(callbackUrl);
       }
     })();
   }, [status, router, session, callbackUrl]);
@@ -57,6 +59,7 @@ const UserLogin = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setIsRedirecting(false);
     try {
       const payload: any = { email };
       if (isSignUp && name) {
@@ -78,6 +81,7 @@ const UserLogin = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setIsRedirecting(false);
     
     try {
         const result = await signIn("credentials", {
@@ -98,6 +102,14 @@ const UserLogin = () => {
     }
    
   };
+
+  if (status === "loading" || isRedirecting) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-120px)] bg-gray-50">
+        <p className="text-sm text-gray-600">Please wait...</p>
+      </div>
+    );
+  }
 
   // --- Main Page Layout ---
   return (
@@ -223,11 +235,15 @@ const UserLogin = () => {
 
             <div className="mt-6">
               <button
-                onClick={() => signIn("google", { callbackUrl })}
+                onClick={() => {
+                  setLoading(true);
+                  setIsRedirecting(true);
+                  signIn("google", { callbackUrl });
+                }}
                 className="flex items-center cursor-pointer justify-center w-full gap-3 px-4 py-3 text-sm font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
               >
                 <GoogleIcon />
-                <span>Sign in with Google</span>
+                <span>{loading ? "Please wait..." : "Sign in with Google"}</span>
               </button>
             </div>
           </div>

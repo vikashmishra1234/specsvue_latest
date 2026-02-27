@@ -17,15 +17,39 @@ export default async function CheckoutPage() {
   }
 
   const userId = session.user.userId;
+  const userEmail = session.user.email;
   await connectToDatabase();
   await Product.init();
   await ContactLens.init();
 
-  // Parallel Data Fetching
-  const [userAddressDoc, cartRaw] = await Promise.all([
-    Address.findOne({ userId }).lean(),
-    Cart.findOne({ userId }).lean()
+  let [addressDoc, cartDoc] = await Promise.all([
+    Address.findOne({ userId }),
+    Cart.findOne({ userId }),
   ]);
+
+  // Legacy fallback: some older users may have data keyed by email.
+  if ((!addressDoc || !cartDoc) && userEmail && userEmail !== userId) {
+    if (!addressDoc) {
+      const legacyAddressDoc = await Address.findOne({ userId: userEmail });
+      if (legacyAddressDoc) {
+        legacyAddressDoc.userId = userId;
+        await legacyAddressDoc.save();
+        addressDoc = legacyAddressDoc;
+      }
+    }
+
+    if (!cartDoc) {
+      const legacyCartDoc = await Cart.findOne({ userId: userEmail });
+      if (legacyCartDoc) {
+        legacyCartDoc.userId = userId;
+        await legacyCartDoc.save();
+        cartDoc = legacyCartDoc;
+      }
+    }
+  }
+
+  const userAddressDoc = addressDoc ? addressDoc.toObject() : null;
+  const cartRaw = cartDoc ? cartDoc.toObject() : null;
 
   if (!cartRaw || (cartRaw as any).items.length === 0) {
       redirect("/cart");

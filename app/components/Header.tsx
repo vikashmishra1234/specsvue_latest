@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Menu, X, User } from "lucide-react"; // Added User icon
 import { ShoppingCart } from "lucide-react";
@@ -25,6 +25,7 @@ const Header = () => {
   const { status, data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const dispatch = useDispatch<any>();
   const { products } = useSelector((state: any) => {
@@ -59,6 +60,23 @@ const Header = () => {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    const highValueRoutes = [
+      "/products",
+      "/cart",
+      "/checkout",
+      "/proceed-to-payment/address",
+      "/contact-lenses",
+      ...(status === "authenticated" ? ["/user"] : ["/login"]),
+    ];
+
+    highValueRoutes.forEach((route) => router.prefetch(route));
+  }, [router, status]);
+
+  const prefetchRoute = (path: string) => {
+    router.prefetch(path);
+  };
 
   // Animation variants for the mobile menu
   const menuVariants = {
@@ -103,6 +121,8 @@ const Header = () => {
                     <Link
                       key={link.label}
                       href={link.href}
+                      onMouseEnter={() => prefetchRoute(link.href)}
+                      onFocus={() => prefetchRoute(link.href)}
                       // CHANGE: Updated text colors for the dark theme
                       className={`text-sm font-semibold tracking-wider transition-colors duration-300 ${
                         isActive
@@ -121,6 +141,8 @@ const Header = () => {
                 {/* ENHANCEMENT: User icon added for desktop view */}
                 <Link
                   href="/cart"
+                  onMouseEnter={() => prefetchRoute("/cart")}
+                  onFocus={() => prefetchRoute("/cart")}
                   className="relative hidden md:block text-gray-300 hover:text-white transition-colors"
                 >
                   <ShoppingCart className="w-6 h-6" />
@@ -134,6 +156,12 @@ const Header = () => {
 
                 <Link
                   href={status === "authenticated" ? "/user" : "/login"}
+                  onMouseEnter={() =>
+                    prefetchRoute(status === "authenticated" ? "/user" : "/login")
+                  }
+                  onFocus={() =>
+                    prefetchRoute(status === "authenticated" ? "/user" : "/login")
+                  }
                   className="hidden md:block text-gray-300 hover:text-white transition-colors"
                 >
                   <User size={24} />
@@ -174,6 +202,8 @@ const Header = () => {
                       <Link
                         key={link.label}
                         href={link.href}
+                        onMouseEnter={() => prefetchRoute(link.href)}
+                        onFocus={() => prefetchRoute(link.href)}
                         onClick={() => setIsOpen(false)}
                         // CHANGE: Updated mobile link colors for dark theme
                         className={`block py-3 px-4 rounded-md text-base font-medium transition-colors duration-300 ${
@@ -190,6 +220,12 @@ const Header = () => {
                   <div className="border-t border-gray-700 mt-4 pt-4">
                     <Link
                       href={status === "authenticated" ? "/user" : "/login"}
+                      onMouseEnter={() =>
+                        prefetchRoute(status === "authenticated" ? "/user" : "/login")
+                      }
+                      onFocus={() =>
+                        prefetchRoute(status === "authenticated" ? "/user" : "/login")
+                      }
                       className=" md:hidden flex gap-2 text-gray-300 hover:text-white transition-colors"
                     >
                       <User size={22} />

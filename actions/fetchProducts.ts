@@ -4,31 +4,39 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 
 interface Filters{
-  categories:[]
-  frameColor:[]
-  frameMaterial:[]
-  frameShape:[]
-  frameSize:[]
-  genders:[]
-  prescriptionType:[]
-  weight:[]
+  categories:string[]
+  frameColor:string[]
+  frameMaterial:string[]
+  frameShape:string[]
+  frameSize:string[]
+  genders:string[]
+  prescriptionType:string[]
+  weight:string[]
 }
-export const useProducts = (limit:number,productCategory:string)=>{
-const [data,setData] = useState<any>()
+export const useProducts = (
+  limit:number,
+  productCategory:string,
+  initialData?: any[],
+  initialFilters?: Filters
+)=>{
+const [data,setData] = useState<any[] | undefined>(initialData)
 const [filters,setFilters] = useState<Filters>({
-   categories:[],
+  categories:[],
   frameColor:[],
   frameMaterial:[],
   frameShape:[],
   frameSize:[],
   genders:[],
   prescriptionType:[],
-  weight:[]
+  weight:[],
+  ...(initialFilters || {})
 })
-const [loading,setLoading] = useState<boolean>(false)
+const [loading,setLoading] = useState<boolean>(!initialData)
 const [error,setError] = useState<string>('');
 
     useEffect(() => {
+      if (initialData && initialFilters) return;
+
       let mounted = true;
 
       const getData = async () => {
@@ -58,7 +66,7 @@ const [error,setError] = useState<string>('');
       return () => {
         mounted = false;
       };
-    }, [limit, productCategory]);
+    }, [limit, productCategory, initialData, initialFilters]);
 
       return {data,error,loading,filters}
 }

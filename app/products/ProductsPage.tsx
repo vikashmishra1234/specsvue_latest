@@ -6,9 +6,13 @@ import { useProducts } from "@/actions/fetchProducts";
 import { useState, useEffect, useMemo } from "react";
 import FilterSection from "./FilterSection";
 
-const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
+const ProductsPage:React.FC<{
+  productType:string|null;
+  initialProducts?: any[];
+  initialFilters?: any;
+}> = ({productType, initialProducts, initialFilters}) => {
   
-  const { data: allProducts, loading, filters } = useProducts(12, "all");
+  const { data: allProducts, loading, filters } = useProducts(12, "all", initialProducts, initialFilters);
   const [products, setProducts] = useState<any[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -18,8 +22,14 @@ const ProductsPage:React.FC<{productType:string|null}> = ({productType}) => {
   // Price range
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
 
-  const priceMin = useMemo(() => Math.min(...(allProducts || []).map((p:any) => p.price)), [allProducts]);
-  const priceMax = useMemo(() => Math.max(...(allProducts || []).map((p:any) => p.price)), [allProducts]);
+  const priceMin = useMemo(() => {
+    const prices = (allProducts || []).map((p:any) => p.price);
+    return prices.length ? Math.min(...prices) : 0;
+  }, [allProducts]);
+  const priceMax = useMemo(() => {
+    const prices = (allProducts || []).map((p:any) => p.price);
+    return prices.length ? Math.max(...prices) : 100000;
+  }, [allProducts]);
 
   // Update filtered products
   useEffect(() => {

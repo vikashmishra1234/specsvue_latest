@@ -3,6 +3,9 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 
 export const revalidate = 300;
+const CACHE_HEADERS = {
+  "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
+};
 
 export async function GET() {
   try {
@@ -40,7 +43,7 @@ export async function GET() {
         frameColor,
         frameMaterial
       }
-    }, { status: 200 });
+    }, { status: 200, headers: CACHE_HEADERS });
     
   } catch (error) {
     console.log("Error While Fetching Filters:", error);

@@ -101,15 +101,6 @@ const Address: React.FC<Props> = ({ userId, email, cart, existingAddresses }) =>
 
   const handleChangeAddress = () => {
     setEditing(true);
-    setFormData({
-      pincode: "",
-      houseNumberOrBuildingName: "",
-      areaOrLocality: "",
-      landmark: "",
-      name: "",
-      phone: "",
-    });
-    setSavedAddressId(null);
   };
 
   return (
