@@ -1,6 +1,7 @@
 import { connectToDatabase } from '@/lib/dbConnect'
 import Product from '@/models/Product'
 import { NextRequest, NextResponse } from 'next/server'
+import mongoose from 'mongoose'
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +16,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Missing productId' }, { status: 400 })
     }
 
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return NextResponse.json({ error: 'Invalid productId' }, { status: 400 })
+    }
+
     const product = await Product.findById(productId)
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
 
     return NextResponse.json({ product }, { status: 200 })
   } catch (error) {

@@ -52,7 +52,26 @@ export default async function CheckoutPage() {
   const cartRaw = cartDoc ? cartDoc.toObject() : null;
 
   if (!cartRaw || (cartRaw as any).items.length === 0) {
-      redirect("/cart");
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-sm">
+            <h1 className="text-2xl font-bold text-gray-900">Your cart is empty</h1>
+            <p className="text-gray-600 mt-2">
+              Add products to your cart, then return to checkout.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/cart"
+                className="inline-flex items-center justify-center rounded-xl bg-black text-white px-6 py-3 font-semibold hover:bg-gray-800 transition-colors"
+              >
+                Go to Cart
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Populate Cart Logic

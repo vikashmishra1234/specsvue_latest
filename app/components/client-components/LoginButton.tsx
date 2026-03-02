@@ -29,16 +29,21 @@ const UserLogin = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState("");
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/cart";
+  const callbackUrlParam = searchParams.get("callbackUrl");
+  const callbackUrl =
+    callbackUrlParam && callbackUrlParam.startsWith("/")
+      ? callbackUrlParam
+      : "/";
 
   // Redirect logic after successful login
   useEffect(() => {
     (async () => {
       if (status === "authenticated") {
         try {
+            const resolvedUserId = session?.user?.userId || session?.user?.email;
             const data = {
                 guestId: localStorage.getItem("guestId"),
-                userId: session?.user?.userId as string,
+                userId: resolvedUserId as string,
             };
             if(data.guestId && data.userId){
                  await axios.post('/api/update-userid', data);

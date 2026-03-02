@@ -34,7 +34,17 @@ export default async function UserOverviewPage() {
 
   // 2. Fetch ALL Orders (Active + Cancelled)
   // We fetch everything here so the client can filter instantly
-  const ordersDoc = await Order.find({ userId }).sort({ createdAt: -1 }).lean();
+  let ordersDoc = await Order.find({ userId }).sort({ createdAt: -1 }).lean();
+
+  // Legacy fallback: older orders may be stored against email as userId.
+  if (ordersDoc.length === 0 && userEmail && userEmail !== userId) {
+    const legacyOrders = await Order.find({ userId: userEmail }).sort({ createdAt: -1 }).lean();
+    if (legacyOrders.length > 0) {
+      await Order.updateMany({ userId: userEmail }, { $set: { userId } });
+      ordersDoc = await Order.find({ userId }).sort({ createdAt: -1 }).lean();
+    }
+  }
+
   const orders = JSON.parse(JSON.stringify(ordersDoc));
 
   return (

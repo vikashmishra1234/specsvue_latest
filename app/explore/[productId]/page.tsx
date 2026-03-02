@@ -33,7 +33,9 @@ const useProduct = (productId: string | undefined | string[]) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!productId) {
+    const normalizedProductId = Array.isArray(productId) ? productId[0] : productId;
+
+    if (!normalizedProductId || typeof normalizedProductId !== "string") {
       setLoading(false);
       setError("Product ID is missing.");
       return;
@@ -42,10 +44,20 @@ const useProduct = (productId: string | undefined | string[]) => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/get-product?productId=${productId}`);
+        setError(null);
+        const safeProductId = encodeURIComponent(normalizedProductId.trim());
+        const res = await axios.get(`/api/get-product?productId=${safeProductId}`);
         setProduct(res.data?.product || null);
-      } catch {
-        setError("Failed to load product details.");
+      } catch (err: any) {
+        const status = err?.response?.status;
+        if (status === 404) {
+          setError("Product not found.");
+        } else if (status === 400) {
+          setError("Invalid product link.");
+        } else {
+          setError("Failed to load product details.");
+        }
+        setProduct(null);
       } finally {
         setLoading(false);
       }
