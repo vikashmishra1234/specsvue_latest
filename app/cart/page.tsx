@@ -194,7 +194,7 @@ export default function ProductsPage() {
                 </span>
               </div>
 
-              <Link href={"/checkout"} className="block w-full">
+              <Link href="/checkout" prefetch={false} className="block w-full">
                 <button className="w-full bg-black text-white py-4 rounded-xl hover:bg-gray-800 transition-all font-bold text-lg shadow-lg hover:shadow-xl active:scale-[0.98]">
                   Checkout
                 </button>

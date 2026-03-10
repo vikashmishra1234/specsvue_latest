@@ -65,10 +65,10 @@ const Header = () => {
     const highValueRoutes = [
       "/products",
       "/cart",
-      "/checkout",
-      "/proceed-to-payment/address",
       "/contact-lenses",
-      ...(status === "authenticated" ? ["/user"] : ["/login"]),
+      ...(status === "authenticated"
+        ? ["/checkout", "/proceed-to-payment/address", "/user"]
+        : ["/login"]),
     ];
 
     highValueRoutes.forEach((route) => router.prefetch(route));

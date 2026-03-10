@@ -56,6 +56,7 @@ const UserLogin = () => {
         sessionStorage.removeItem("navigateAfterLogin");
         setIsRedirecting(true);
         router.replace(callbackUrl);
+        router.refresh();
       }
     })();
   }, [status, router, session, callbackUrl]);
